@@ -1,6 +1,8 @@
 package iusj.ECTS.controllers;
 
+import iusj.ECTS.enumerations.ClassLevel;
 import iusj.ECTS.enumerations.FileCategory;
+import iusj.ECTS.enumerations.Semester;
 import iusj.ECTS.models.File;
 import iusj.ECTS.services.FileHandler;
 import iusj.ECTS.services.FileService;
@@ -61,7 +63,12 @@ public class FileController {
     }
 
     @GetMapping("/all")
-    public List<File> getAllPvs(@RequestParam(required = false) String category) {
+    public List<File> getAllPvs(
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) ClassLevel classLevel,
+            @RequestParam(required = false) Semester semester,
+            @RequestParam(required = false) String academicYear) {
+
         // Convert the category String to FileCategory enum
         FileCategory fileCategory = null;
         if (category != null && !category.isEmpty()) {
@@ -71,8 +78,11 @@ public class FileController {
                 throw new RuntimeException("Invalid category provided.");
             }
         }
-        return fileService.AllPvs(fileCategory);
+
+        // Call the service with the filtering parameters
+        return fileService.AllPvs(fileCategory, classLevel, semester, academicYear);
     }
+
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deletePv(@PathVariable Long id) {

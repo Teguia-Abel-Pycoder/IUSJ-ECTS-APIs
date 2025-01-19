@@ -14,4 +14,10 @@ import java.util.Optional;
 public interface FileRepository extends JpaRepository<File, Long> {
     Optional<File> findPvByAcademicYearAndClassLevelAndSemesterAndCategory(String academicYear, ClassLevel classLevel, Semester semester,FileCategory category);
     List<File> findByCategory(FileCategory category);
+    List<File> findByClassLevel(ClassLevel classLevel);
+
+    List<File> findBySemester(Semester semester);
+
+    List<File> findByAcademicYear(String academicYear);
+    List<File> findByCategoryAndClassLevelAndSemesterAndAcademicYear(FileCategory category, ClassLevel classLevel, Semester semester, String academicYear);
 }

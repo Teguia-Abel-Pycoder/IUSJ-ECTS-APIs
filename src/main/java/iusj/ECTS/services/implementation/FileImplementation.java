@@ -1,6 +1,8 @@
 package iusj.ECTS.services.implementation;
 
+import iusj.ECTS.enumerations.ClassLevel;
 import iusj.ECTS.enumerations.FileCategory;
+import iusj.ECTS.enumerations.Semester;
 import iusj.ECTS.models.File;
 import iusj.ECTS.repositories.FileRepository;
 import iusj.ECTS.services.FileHandler;
@@ -34,13 +36,29 @@ public class FileImplementation implements FileService {
     }
 
     @Override
-    public List<File> AllPvs(FileCategory category) {
-        if (category == null) {
-            return fileRepository.findAll();
-        } else {
+    public List<File> AllPvs(FileCategory category, ClassLevel classLevel, Semester semester, String academicYear) {
+        // Filter based on the provided parameters
+        if (category != null && classLevel != null && semester != null && academicYear != null) {
+            return fileRepository.findByCategoryAndClassLevelAndSemesterAndAcademicYear(category, classLevel, semester, academicYear);
+        }
+        // If category is provided but others aren't, filter by category only
+        if (category != null) {
             return fileRepository.findByCategory(category);
         }
+        // Similarly, filter by classLevel, semester, or academicYear if they are provided
+        if (classLevel != null) {
+            return fileRepository.findByClassLevel(classLevel);
+        }
+        if (semester != null) {
+            return fileRepository.findBySemester(semester);
+        }
+        if (academicYear != null) {
+            return fileRepository.findByAcademicYear(academicYear);
+        }
+        // If no parameters are provided, return all files
+        return fileRepository.findAll();
     }
+
 
 
 
@@ -69,6 +87,7 @@ public class FileImplementation implements FileService {
         existingFile.setSemester(file.getSemester());
         existingFile.setAcademicYear(file.getAcademicYear());
         existingFile.setUploadedBy(file.getUploadedBy());
+        existingFile.setCategory(file.getCategory());
 
         checkForDuplicatePv(existingFile);
         return fileRepository.save(existingFile);
@@ -86,7 +105,7 @@ public class FileImplementation implements FileService {
                 file.getAcademicYear(), file.getClassLevel(), file.getSemester(), file.getCategory());
 
         if (existingPv.isPresent() && !existingPv.get().getFileId().equals(file.getFileId())) {
-            throw new RuntimeException("A PV with the same class level, semester, and academic year already exists.");
+            throw new RuntimeException("A PV with the same class level, semester, academic and category year already exists.");
         }
     }
 }
