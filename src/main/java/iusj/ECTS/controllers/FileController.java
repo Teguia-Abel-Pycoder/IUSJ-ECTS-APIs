@@ -4,6 +4,7 @@ import iusj.ECTS.enumerations.ClassLevel;
 import iusj.ECTS.enumerations.FileCategory;
 import iusj.ECTS.enumerations.Semester;
 import iusj.ECTS.models.File;
+import iusj.ECTS.services.ExcelHandler;
 import iusj.ECTS.services.FileHandler;
 import iusj.ECTS.services.FileService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,8 @@ import java.util.List;
 @RequestMapping("/iusj-ects/api/file")
 @CrossOrigin("*")
 public class FileController {
+    @Autowired
+    private ExcelHandler excelHandler;
 
     @Autowired
     private FileHandler fileHandler;
@@ -33,6 +36,10 @@ public class FileController {
     @PostMapping("/upload")
     public String handleFileUpload(@RequestParam("file") MultipartFile file) {
         return fileHandler.handleFileUpload(file);
+    }
+
+    public void exampleUsage() {
+        excelHandler.readAndManipulateExcel("example.xlsx");
     }
 
     @GetMapping("/{filename:.+}")
@@ -71,6 +78,7 @@ public class FileController {
 
         // Convert the category String to FileCategory enum
         FileCategory fileCategory = null;
+        excelHandler.readAndManipulateExcel("Inge4_SRT_S8_SN_2022-2023.xlsx");
         if (category != null && !category.isEmpty()) {
             try {
                 fileCategory = FileCategory.valueOf(category); // Convert to enum
