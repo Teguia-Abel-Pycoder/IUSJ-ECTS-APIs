@@ -14,7 +14,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
 @RestController
-@RequestMapping("/api/image")
+@RequestMapping("/iusj-ects/api/image")
 @CrossOrigin("*")
 public class FileController {
 

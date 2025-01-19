@@ -8,16 +8,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 @Service
 public class PvImplementation implements PvService {
     @Autowired
     private FileController fileController;
+    @Autowired
     private PvRepository pvRepository;
 
     @Override
     public Pv UploadPv(MultipartFile excelFile, Pv pv) {
         pv.setPvPath(fileController.handleFileUpload(excelFile));
-        pvRepository.save(pv);
-        return null;
+        System.out.println("PV: \n\t"+ pv.toString());
+        return pvRepository.save(pv);
+    }
+
+    @Override
+    public List<Pv> AllPvs() {
+        return pvRepository.findAll();
     }
 }
