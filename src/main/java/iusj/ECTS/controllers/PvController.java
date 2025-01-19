@@ -5,6 +5,7 @@ import iusj.ECTS.models.Pv;
 import iusj.ECTS.services.PvService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -40,5 +41,15 @@ public class PvController {
     @GetMapping("/all")
     public List<Pv> getAllPvs() {
         return pvService.AllPvs();
+    }
+    // Endpoint to delete a Pv by its ID
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<Void> deletePv(@PathVariable Long id) {
+        try {
+            pvService.deletePv(id);
+            return ResponseEntity.noContent().build(); // 204 No Content
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build(); // 404 Not Found
+        }
     }
 }

@@ -8,4 +8,6 @@ import java.util.List;
 public interface PvService {
     Pv UploadPv(MultipartFile excelFile, Pv pv);
     List<Pv> AllPvs();
+    void deletePv(Long id);
+    Pv updatePv(MultipartFile excelFile, Pv pv);
 }
