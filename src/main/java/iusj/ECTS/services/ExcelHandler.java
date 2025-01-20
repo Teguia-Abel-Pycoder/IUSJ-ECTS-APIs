@@ -23,6 +23,7 @@ public class ExcelHandler {
     @Autowired
     private AcademicLevelRepository academicLevelRepository;
     private Map<String, String> courses;
+    Map<String, String> idsNames = new HashMap<>();
 
     void setCourses(String level){
         switch (level) {
@@ -48,9 +49,14 @@ public class ExcelHandler {
             default:
                 System.out.println("Unknown academic level");
         }
+        System.out.println("Courses:=======================================================================");
+        for (Map.Entry<String, String> entry : courses.entrySet()) {
+            System.out.println("EU: " + entry.getKey() + ", Course name: " + entry.getValue());
+        }
     }
 
     public void readAndManipulateExcel(String fileName) {
+        setCourses("SRT4");
         try {
             // Build the full path to the Excel file
             File excelFile = Paths.get(uploadDir, fileName).toFile();
@@ -63,11 +69,9 @@ public class ExcelHandler {
 
             // Get the first sheet
             Sheet sheet = workbook.getSheetAt(0);
-            System.out.println("Physical number of rows: " + sheet.getPhysicalNumberOfRows());
-            System.out.println("Last row number: " + sheet.getLastRowNum());
 
             // Flag to track if "Matricules" has been found and processed
-//            boolean foundMatricules = false;
+            boolean foundMatricules = false;
 
             for (int i = 0; i <= sheet.getLastRowNum(); i++) { // Iterate over rows
                 Row row = sheet.getRow(i);
@@ -77,33 +81,59 @@ public class ExcelHandler {
                     for (int j = 0; j < row.getLastCellNum(); j++) { // Iterate over cells in the row
                         Cell cell = row.getCell(j);
                         if (cell != null && cell.getCellType() == CellType.STRING) {
+                            if (!foundMatricules && Objects.equals(cell.getStringCellValue(), "Matricules")) {
+                                foundMatricules = true; // Mark as processed
+
+                                // Extract data from subsequent rows
+                                Map<String, String> idsNames = extractIDnNamesPV(sheet, i + 2, j);
+                                System.out.println("Extracted Data: " + idsNames);
+
+                                break; // Exit the inner loop
+                            }
+                        }
+                    }
+                    if (foundMatricules) break; // Exit the outer loop after processing "Matricules"
+                }
+            }
+            for (int i = 0; i <= sheet.getLastRowNum(); i++) { // Iterate over rows
+                Row row = sheet.getRow(i);
+                if (row != null) {
+                    for (int j = 0; j < row.getLastCellNum(); j++) { // Iterate over cells in the row
+                        Cell cell = row.getCell(j);
+                        if (cell != null && cell.getCellType() == CellType.STRING) {
+
                             if (cell.getCellType() == CellType.STRING && Objects.equals(cell.getStringCellValue(), "MATIERES")){
-                                int k = j;
-                                while(k< row.getLastCellNum()){
-                                    if (cell != null && cell.getCellType() == CellType.STRING) {
-                                        System.out.println(row.getCell(k));
+                                System.out.println("OKAY00000000000000000000000000000000000000000000000000000000000000000000000");
+                                int k = j+1;
+                                System.out.println(k + ", on "+ "Max "+ row.getLastCellNum());
+                                while(k < row.getLastCellNum()){
+                                    System.out.println("\n"+row.getCell(k).getStringCellValue());
+                                    if (courses.containsValue(row.getCell(k).getStringCellValue())) {
+                                        System.out.println("OKAYaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa0");
+
+                                        int z = k;
+                                        int y = i+3;
+                                        System.out.println("CourseName" + row.getCell(k).getStringCellValue());
+                                        while (z < row.getLastCellNum()){
+                                            System.out.println("OKAY666666666666 in zzzzzzzzzzzzzzz");
+
+                                            if(Objects.equals( sheet.getRow(i+1).getCell(z).getStringCellValue(), "M.Dis")){
+                                                System.out.println("Yes  " + idsNames.values().size());
+                                                for (int a = 0; a < idsNames.values().size(); a++){
+                                                    System.out.println(sheet.getRow(y).getCell(z).getStringCellValue());
+                                                    y++;
+                                                }
+                                                System.out.println("==============================================================");
+                                                break;
+                                            }
+                                            z++;
+                                        }
                                     }
                                     k++;
                                 }
                             }
-                            // Check for the first occurrence of "Matricules"
-//                            if (!foundMatricules && Objects.equals(cell.getStringCellValue(), "Matricules")) {
-//                                foundMatricules = true; // Mark as processed
-//
-//                                // Extract data from subsequent rows
-//                                Map<String, String> idsNames = extractIDnNamesPV(sheet, i + 2, j);
-//                                System.out.println("Extracted Data: " + idsNames);
-//
-//                                break; // Exit the inner loop
-//                            }
-
-
                         }
                     }
-//                    if (foundMatricules) break; // Exit the outer loop after processing "Matricules"
-
-                }else {
-//                    System.out.println("Row is null at:" + row.getRowNum());
                 }
             }
 
@@ -118,7 +148,6 @@ public class ExcelHandler {
 
 
     private Map<String, String> extractIDnNamesPV(Sheet sheet, int startRow, int column) {
-        Map<String, String> idsNames = new HashMap<>();
         int currentRow = startRow;
         Row row = sheet.getRow(currentRow);
 
