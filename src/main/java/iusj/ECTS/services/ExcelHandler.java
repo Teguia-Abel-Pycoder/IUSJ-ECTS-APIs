@@ -1,6 +1,11 @@
 package iusj.ECTS.services;
 
+import iusj.ECTS.enumerations.ClassLevel;
+import iusj.ECTS.enumerations.FileCategory;
+import iusj.ECTS.enumerations.Semester;
+import iusj.ECTS.models.AcademicFile;
 import iusj.ECTS.repositories.AcademicLevelRepository;
+import iusj.ECTS.repositories.AcademicFileRepository;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,9 +16,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.time.Year;
+import java.util.*;
 
 @Service
 public class ExcelHandler {
@@ -22,41 +26,101 @@ public class ExcelHandler {
     private String uploadDir;
     @Autowired
     private AcademicLevelRepository academicLevelRepository;
+    @Autowired
+    private AcademicFileRepository academicFileRepository;
     private Map<String, String> courses;
+    String academicYear = getCurrentAcademicYear();
     Map<String, String> idsNames = new HashMap<>();
+    Map<String, ArrayList<Double>> marksPerCourse = new HashMap<>();
+    public static String getCurrentAcademicYear() {
+        int currentYear = Year.now().getValue(); // Get the current year (e.g., 2025)
+        int startYear = currentYear - 1;        // Academic year starts from the previous year
+        int endYear = currentYear;             // Ends at the current year
+        return startYear + "-" + endYear;      // Format as "YYYY-YYYY"
+    }
+    public void mainFunction(ClassLevel lvl, Semester semester){
+            Optional<AcademicFile> optionalFile = academicFileRepository.findPvByAcademicYearAndClassLevelAndSemesterAndCategory("2020-2021", lvl, semester, FileCategory.PV);
+            if (optionalFile.isPresent()) {
+                System.out.println("File info: " + optionalFile);
+                String filePath = optionalFile.get().getFilePath();
+                readAndManipulateExcel(filePath, lvl);
+                System.out.println("hasCoursesWithMoreThan20Marks? " + hasCoursesWithMoreThan20Marks(marksPerCourse));
 
-    void setCourses(String level){
+                while (hasCoursesWithMoreThan20Marks(marksPerCourse)) {
+                    academicYear = decreaseAcademicYear(academicYear);
+
+                    System.out.println("True:=======================================================================");
+                    System.out.println("academic year: " + academicYear);
+
+                    Optional<AcademicFile> optionalFile2 = academicFileRepository.findPvByAcademicYearAndClassLevelAndSemesterAndCategory(
+                            academicYear, lvl, semester, FileCategory.PV
+                    );
+
+                    if (optionalFile2.isPresent()) {
+                        System.out.println("optionalFile2 : " + optionalFile2.get().getFilePath());
+
+                        filePath = optionalFile2.get().getFilePath();
+                        readAndManipulateExcel(filePath, lvl);
+                    } else {
+                        System.out.println("No file found for academic year: " + academicYear);
+                        break; // Exit loop if no file is found
+                    }
+
+                }
+
+            } else {
+                System.out.println("No file found with the specified criteria.");
+            }
+    }
+    public static String decreaseAcademicYear(String academicYear) {
+        // Split the academic year into start and end years
+        String[] years = academicYear.split("-");
+        if (years.length != 2) {
+            throw new IllegalArgumentException("Invalid academic year format: " + academicYear);
+        }
+
+        int startYear = Integer.parseInt(years[0]); // Extract the start year
+        int endYear = Integer.parseInt(years[1]);   // Extract the end year
+
+        // Decrease both years by 1
+        startYear--;
+        endYear--;
+
+        // Reconstruct the academic year
+        return startYear + "-" + endYear;
+    }
+
+    void setCourses(ClassLevel level){
         switch (level) {
-            case "ISI3":
+            case ISI3:
                 courses = academicLevelRepository.findByLevelName("ISI3").getCourses();
                 break;
-            case "ISI4":
+            case ISI4:
                 courses = academicLevelRepository.findByLevelName("ISI4").getCourses();
                 break;
-            case "ISI5":
+            case ISI5:
                 courses = academicLevelRepository.findByLevelName("ISI5").getCourses();
                 break;
-            case "SRT3":
+            case SRT3:
                 courses = academicLevelRepository.findByLevelName("SRT3").getCourses();
                 break;
-            case "SRT4":
+            case SRT4:
                 courses = academicLevelRepository.findByLevelName("SRT4").getCourses();
                 break;
-            case "SRT5":
+            case SRT5:
                 courses = academicLevelRepository.findByLevelName("SRT5").getCourses();
                 break;
 
             default:
                 System.out.println("Unknown academic level");
         }
-        System.out.println("Courses:=======================================================================");
         for (Map.Entry<String, String> entry : courses.entrySet()) {
             System.out.println("EU: " + entry.getKey() + ", Course name: " + entry.getValue());
         }
     }
 
-    public void readAndManipulateExcel(String fileName) {
-        setCourses("SRT4");
+    public void readAndManipulateExcel(String fileName, ClassLevel classLevel) {
+        setCourses(classLevel);
         try {
             // Build the full path to the Excel file
             File excelFile = Paths.get(uploadDir, fileName).toFile();
@@ -103,27 +167,30 @@ public class ExcelHandler {
                         if (cell != null && cell.getCellType() == CellType.STRING) {
 
                             if (cell.getCellType() == CellType.STRING && Objects.equals(cell.getStringCellValue(), "MATIERES")){
-                                System.out.println("OKAY00000000000000000000000000000000000000000000000000000000000000000000000");
                                 int k = j+1;
-                                System.out.println(k + ", on "+ "Max "+ row.getLastCellNum());
                                 while(k < row.getLastCellNum()){
-                                    System.out.println("\n"+row.getCell(k).getStringCellValue());
                                     if (courses.containsValue(row.getCell(k).getStringCellValue())) {
-                                        System.out.println("OKAYaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa0");
 
                                         int z = k;
                                         int y = i+3;
-                                        System.out.println("CourseName" + row.getCell(k).getStringCellValue());
+                                        String courseName = row.getCell(k).getStringCellValue();
+                                        marksPerCourse.putIfAbsent(courseName, new ArrayList<>());
+
                                         while (z < row.getLastCellNum()){
-                                            System.out.println("OKAY666666666666 in zzzzzzzzzzzzzzz");
 
                                             if(Objects.equals( sheet.getRow(i+1).getCell(z).getStringCellValue(), "M.Dis")){
-                                                System.out.println("Yes  " + idsNames.values().size());
                                                 for (int a = 0; a < idsNames.values().size(); a++){
-                                                    System.out.println(sheet.getRow(y).getCell(z).getStringCellValue());
+                                                    if(sheet.getRow(y).getCell(z).getStringCellValue().isBlank() || sheet.getRow(y).getCell(z).getStringCellValue().isEmpty()){
+                                                        double mark = 0;
+                                                    }else{
+                                                        double mark = Double.parseDouble(sheet.getRow(y).getCell(z).getStringCellValue());
+                                                        if(mark >= 10.0){
+                                                            marksPerCourse.get(courseName).add(mark);
+                                                        }
+                                                    }
+
                                                     y++;
                                                 }
-                                                System.out.println("==============================================================");
                                                 break;
                                             }
                                             z++;
@@ -135,15 +202,30 @@ public class ExcelHandler {
                         }
                     }
                 }
-            }
 
-            // Close the workbook and InputStream
+            }
+            System.out.println("Marks per Course:");
+            marksPerCourse.forEach((course, marks) -> {
+                System.out.println(course + " -> " + marks);
+            });
             workbook.close();
             fis.close();
 
         } catch (IOException e) {
             throw new RuntimeException("Failed to read or manipulate Excel file.", e);
         }
+    }
+    public boolean hasCoursesWithMoreThan20Marks(Map<String, ArrayList<Double>> marksCourses) {
+        for (Map.Entry<String, ArrayList<Double>> entry : marksCourses.entrySet()) {
+            String courseName = entry.getKey();
+            ArrayList<Double> marks = entry.getValue();
+
+            if (marks.size() > 20) {
+                System.out.println("Course with more than 20 marks: " + courseName);
+                return false;
+            }
+        }
+        return true;
     }
 
 

@@ -3,7 +3,7 @@ package iusj.ECTS.controllers;
 import iusj.ECTS.enumerations.ClassLevel;
 import iusj.ECTS.enumerations.FileCategory;
 import iusj.ECTS.enumerations.Semester;
-import iusj.ECTS.models.File;
+import iusj.ECTS.models.AcademicFile;
 import iusj.ECTS.services.ExcelHandler;
 import iusj.ECTS.services.FileHandler;
 import iusj.ECTS.services.FileService;
@@ -23,7 +23,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/iusj-ects/api/file")
 @CrossOrigin("*")
-public class FileController {
+public class AcademicFileController {
     @Autowired
     private ExcelHandler excelHandler;
 
@@ -39,7 +39,7 @@ public class FileController {
     }
 
     public void exampleUsage() {
-        excelHandler.readAndManipulateExcel("example.xlsx");
+        excelHandler.readAndManipulateExcel("example.xlsx", ClassLevel.SRT4);
     }
 
     @GetMapping("/{filename:.+}")
@@ -59,18 +59,18 @@ public class FileController {
     }
 
     @PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public File createPv(
+    public AcademicFile createPv(
             @RequestPart("file") MultipartFile file,
-            @RequestPart("fileDetails") File fileJson) {
+            @RequestPart("fileDetails") AcademicFile academicFileJson) {
         try {
-            return fileService.UploadPv(file, fileJson);
+            return fileService.UploadPv(file, academicFileJson);
         } catch (Exception e) {
             throw new RuntimeException("Failed to upload file: " + e.getMessage(), e);
         }
     }
 
     @GetMapping("/all")
-    public List<File> getAllPvs(
+    public List<AcademicFile> getAllPvs(
             @RequestParam(required = false) String category,
             @RequestParam(required = false) ClassLevel classLevel,
             @RequestParam(required = false) Semester semester,
@@ -78,7 +78,7 @@ public class FileController {
 
         // Convert the category String to FileCategory enum
         FileCategory fileCategory = null;
-        excelHandler.readAndManipulateExcel("Inge4_SRT_S8_SN_2022-2023.xlsx");
+        excelHandler.mainFunction( ClassLevel.SRT4, Semester.SEMESTER1);
         if (category != null && !category.isEmpty()) {
             try {
                 fileCategory = FileCategory.valueOf(category); // Convert to enum
@@ -103,11 +103,11 @@ public class FileController {
     }
 
     @PutMapping(value = "/update/{pvId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public File updatePv(
+    public AcademicFile updatePv(
             @RequestPart("file") MultipartFile file,
-            @RequestPart("fileDetails") File fileJson) {
+            @RequestPart("fileDetails") AcademicFile academicFileJson) {
         try {
-            return fileService.updatePv(file, fileJson);
+            return fileService.updatePv(file, academicFileJson);
         } catch (Exception e) {
             throw new RuntimeException("ERROR: " + e.getMessage(), e);
         }
