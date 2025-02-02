@@ -49,4 +49,10 @@ public class EquivalenceController {
             @RequestBody Map<String, List<String>> coursesToRemove) {
         return equivalenceService.removeCourse(id, type, coursesToRemove);
     }
+    @PutMapping("/{id}/update-school")
+    public ResponseEntity<String> updateSchoolName(
+            @PathVariable Long id,
+            @RequestParam("newName") String newSchoolName) {
+        return equivalenceService.updateSchoolName(id, newSchoolName);
+    }
 }

@@ -100,4 +100,16 @@ public class EquivalenceImplementation implements EquivalenceService {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error processing request");
         }
     }
+    public ResponseEntity<String> updateSchoolName(Long id, String newSchoolName) {
+        Optional<Equivalence> optionalEquivalence = equivalenceRepository.findById(id);
+        if (optionalEquivalence.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Equivalence not found");
+        }
+
+        Equivalence equivalence = optionalEquivalence.get();
+        equivalence.setSchoolName(newSchoolName);
+
+        equivalenceRepository.save(equivalence);
+        return ResponseEntity.ok("School name updated successfully");
+    }
 }
