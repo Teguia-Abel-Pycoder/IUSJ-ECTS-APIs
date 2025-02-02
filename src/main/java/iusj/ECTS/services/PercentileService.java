@@ -25,7 +25,7 @@ public class PercentileService {
         return myList.get(lowerIndex) * (1 - weight) + myList.get(upperIndex) * weight;
     }
 
-    public static ArrayList<Double> mgpPercentile(ArrayList<Double> values) {
+    public static Object mgpPercentile(ArrayList<Double> values, double studentMgp) {
         ArrayList<Double> deciles = new ArrayList<>();
 
         for (int i = 0; i < 9; i++) {
@@ -34,6 +34,46 @@ public class PercentileService {
             deciles.add(percentileValue);
         }
 
+        if(studentMgp>=deciles.get(0)){
+            return 0;
+        } else if ((studentMgp >= deciles.get(1)) && (studentMgp < deciles.get(0))) {
+            return 1;
+        }
+        else if ((studentMgp >= deciles.get(2)) && (studentMgp < deciles.get(1))) {
+            return 2;
+        }
+        else if ((studentMgp >= deciles.get(3)) && (studentMgp < deciles.get(2))) {
+            return 3;
+        }
+        else if ((studentMgp >= deciles.get(4)) && (studentMgp < deciles.get(3))) {
+            return 4;
+        }
+        else if ((studentMgp >= deciles.get(5)) && (studentMgp < deciles.get(4))) {
+            return 5;
+        }
+        else if ((studentMgp >= deciles.get(6)) && (studentMgp < deciles.get(5))) {
+            return 6;
+        }
+        else if ((studentMgp >= deciles.get(7)) && (studentMgp < deciles.get(6))) {
+            return 7;
+        }
+        else if ((studentMgp >= deciles.get(8)) && (studentMgp < deciles.get(7))) {
+            return 8;
+        }
+        else if ((studentMgp >= deciles.get(9)) && (studentMgp < deciles.get(8))) {
+            return 9;
+        }
+
+        return null;
+    }
+    public static ArrayList<Double> marksPercentile(ArrayList<Double> values ) {
+        ArrayList<Double> deciles = new ArrayList<>();
+
+        for (int i = 0; i < 9; i++) {
+            double k = (i + 1) / 10.0;  // 0.1, 0.2, ..., 0.9
+            double percentileValue = calculatePercentile(values, k);
+            deciles.add(percentileValue);
+        }
         return deciles;
     }
     public Map<String, ArrayList<Double>> myPercentile(ArrayList<Double> myList) {
@@ -73,5 +113,9 @@ public class PercentileService {
 
         return gradedMarks;
     }
+    public void gradePercentileComparism(String courseName, String grade, Map<String, ArrayList<Double>> gradedMarks){
+        mgpPercentile(gradedMarks.get(grade));
+    }
+
 
 }
