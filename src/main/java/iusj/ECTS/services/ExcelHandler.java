@@ -31,6 +31,8 @@ public class ExcelHandler {
     private Map<String, String> courses;
     String academicYear = getCurrentAcademicYear();
     Map<String, String> idsNames = new HashMap<>();
+    Map<String, Double> nameMarks = new HashMap<>();
+
     Map<String, ArrayList<Double>> marksPerCourse = new HashMap<>();
     public static String getCurrentAcademicYear() {
         int currentYear = Year.now().getValue(); // Get the current year (e.g., 2025)
@@ -199,15 +201,36 @@ public class ExcelHandler {
                                     k++;
                                 }
                             }
+
+                            if (cell.getCellType() == CellType.STRING && Objects.equals(cell.getStringCellValue(), "MGP")){
+                                int k = j;
+                                int l = i+2;
+                                for (Map.Entry<String, String> entry : idsNames.entrySet()) {
+
+                                    if(sheet.getRow(l).getCell(k).getStringCellValue().isBlank() || sheet.getRow(l).getCell(k).getStringCellValue().isEmpty()){
+                                        double mgp = 0;
+                                        nameMarks.put(entry.getValue(), mgp);
+                                    }else{
+                                        double mgp = Double.parseDouble(sheet.getRow(l).getCell(k).getStringCellValue());
+                                            nameMarks.put(entry.getValue(), mgp);
+                                    }
+
+                                    l++;
+                                }
+                            }
                         }
                     }
                 }
 
             }
-            System.out.println("Marks per Course:");
-            marksPerCourse.forEach((course, marks) -> {
-                System.out.println(course + " -> " + marks);
-            });
+            System.out.println("Extracted IDs and Names:");
+            for (Map.Entry<String, Double> entry : nameMarks.entrySet()) {
+                System.out.println("Name: " + entry.getKey() + ", Mark: " + entry.getValue());
+            }
+//            System.out.println("Marks per Course:");
+//            marksPerCourse.forEach((course, marks) -> {
+//                System.out.println(course + " -> " + marks);
+//            });
             workbook.close();
             fis.close();
 
@@ -244,10 +267,10 @@ public class ExcelHandler {
         }
 
         // Print the content of the idsNames map
-        System.out.println("Extracted IDs and Names:");
-        for (Map.Entry<String, String> entry : idsNames.entrySet()) {
-            System.out.println("ID: " + entry.getKey() + ", Name: " + entry.getValue());
-        }
+//        System.out.println("Extracted IDs and Names:");
+//        for (Map.Entry<String, String> entry : idsNames.entrySet()) {
+//            System.out.println("ID: " + entry.getKey() + ", Name: " + entry.getValue());
+//        }
 
         return idsNames;
     }
