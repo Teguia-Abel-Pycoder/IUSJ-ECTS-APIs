@@ -213,8 +213,8 @@ public class ExcelHandler {
                                     }else{
                                         double mgp = Double.parseDouble(sheet.getRow(l).getCell(k).getStringCellValue());
                                             nameMarks.put(entry.getValue(), mgp);
-                                            System.out.println("ids ---  Name: " + entry.getKey() + " --- " + entry.getValue());
-                                            System.out.println("MGP: " + mgp);
+//                                            System.out.println("ids ---  Name: " + entry.getKey() + " --- " + entry.getValue());
+//                                            System.out.println("MGP: " + mgp);
                                     }
 
                                     l++;
@@ -225,10 +225,10 @@ public class ExcelHandler {
                 }
 
             }
-//            System.out.println("Extracted Names and Marks:");
-//            for (Map.Entry<String, Double> entry : nameMarks.entrySet()) {
-//                System.out.println("Name: " + entry.getKey() + ", Mark: " + entry.getValue());
-//            }
+            System.out.println("Extracted Names and Marks:");
+            for (Map.Entry<String, Double> entry : nameMarks.entrySet()) {
+                System.out.println("Name: " + entry.getKey() + ", Mark: " + entry.getValue());
+            }
 //            System.out.println("Marks per Course:");
 //            marksPerCourse.forEach((course, marks) -> {
 //                System.out.println(course + " -> " + marks);
