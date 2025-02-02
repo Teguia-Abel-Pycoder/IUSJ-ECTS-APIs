@@ -247,7 +247,7 @@ public class ExcelHandler {
             ArrayList<Double> marks = entry.getValue();
 
             if (marks.size() > 30) {
-                System.out.println("Course with more than 20 marks: " + courseName);
+                System.out.println("Course with more than 30 marks: " + courseName);
                 return false;
             }
         }
