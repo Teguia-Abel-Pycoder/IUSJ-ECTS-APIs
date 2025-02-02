@@ -42,4 +42,11 @@ public class EquivalenceController {
             @RequestBody Map<String, List<String>> newCourses) {
         return equivalenceService.addCourse(id, type, newCourses);
     }
+    @PostMapping("/{id}/remove-course")
+    public ResponseEntity<String> removeCourse(
+            @PathVariable Long id,
+            @RequestParam("type") String type,
+            @RequestBody Map<String, List<String>> coursesToRemove) {
+        return equivalenceService.removeCourse(id, type, coursesToRemove);
+    }
 }

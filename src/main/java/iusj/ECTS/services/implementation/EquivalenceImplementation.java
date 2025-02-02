@@ -67,5 +67,37 @@ public class EquivalenceImplementation implements EquivalenceService {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error processing request");
         }
     }
+    @Override
+    public ResponseEntity<String> removeCourse(Long id, String type, Map<String, List<String>> coursesToRemove) {
+        Optional<Equivalence> optionalEquivalence = equivalenceRepository.findById(id);
+        if (optionalEquivalence.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Equivalence not found");
+        }
 
+        Equivalence equivalence = optionalEquivalence.get();
+        Map<String, List<String>> coursesMap = "isi".equalsIgnoreCase(type)
+                ? equivalence.getIsiCourses()
+                : "srt".equalsIgnoreCase(type) ? equivalence.getSrtCourses() : null;
+
+        if (coursesMap == null) {
+            return ResponseEntity.badRequest().body("Invalid course type. Use 'isi' or 'srt'");
+        }
+
+        coursesToRemove.forEach((key, value) -> {
+            if (coursesMap.containsKey(key)) {
+                coursesMap.get(key).removeAll(value);
+                if (coursesMap.get(key).isEmpty()) {
+                    coursesMap.remove(key); // Remove empty keys
+                }
+            }
+        });
+
+        try {
+            equivalence.serializeMaps(); // Update JSON fields
+            equivalenceRepository.save(equivalence);
+            return ResponseEntity.ok("Courses removed successfully");
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error processing request");
+        }
+    }
 }
