@@ -46,9 +46,9 @@ public class ExcelHandler {
                 System.out.println("File info: " + optionalFile);
                 String filePath = optionalFile.get().getFilePath();
                 readAndManipulateExcel(filePath, lvl);
-                System.out.println("hasCoursesWithMoreThan20Marks? " + hasCoursesWithMoreThan20Marks(marksPerCourse));
+                System.out.println("hasCoursesWithMoreThan20Marks? " + hasCoursesWithMoreThan30Marks(marksPerCourse));
 
-                while (hasCoursesWithMoreThan20Marks(marksPerCourse)) {
+                while (hasCoursesWithMoreThan30Marks(marksPerCourse)) {
                     academicYear = decreaseAcademicYear(academicYear);
 
                     System.out.println("True:=======================================================================");
@@ -241,7 +241,7 @@ public class ExcelHandler {
             throw new RuntimeException("Failed to read or manipulate Excel file.", e);
         }
     }
-    public boolean hasCoursesWithMoreThan20Marks(Map<String, ArrayList<Double>> marksCourses) {
+    public boolean hasCoursesWithMoreThan30Marks(Map<String, ArrayList<Double>> marksCourses) {
         for (Map.Entry<String, ArrayList<Double>> entry : marksCourses.entrySet()) {
             String courseName = entry.getKey();
             ArrayList<Double> marks = entry.getValue();
