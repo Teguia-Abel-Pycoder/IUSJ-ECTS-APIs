@@ -32,7 +32,6 @@ public class ExcelHandler {
     String academicYear = getCurrentAcademicYear();
     Map<String, String> idsNames = new HashMap<>();
     Map<String, Double> nameMarks = new HashMap<>();
-
     Map<String, ArrayList<Double>> marksPerCourse = new HashMap<>();
     public static String getCurrentAcademicYear() {
         int currentYear = Year.now().getValue(); // Get the current year (e.g., 2025)
@@ -40,13 +39,14 @@ public class ExcelHandler {
         int endYear = currentYear;             // Ends at the current year
         return startYear + "-" + endYear;      // Format as "YYYY-YYYY"
     }
-    public void mainFunction(ClassLevel lvl, Semester semester){
+    public void mainFunction(ClassLevel lvl, Semester semester, Boolean mgp){
             Optional<AcademicFile> optionalFile = academicFileRepository.findPvByAcademicYearAndClassLevelAndSemesterAndCategory("2020-2021", lvl, semester, FileCategory.PV);
             if (optionalFile.isPresent()) {
                 System.out.println("File info: " + optionalFile);
                 String filePath = optionalFile.get().getFilePath();
-                readAndManipulateExcel(filePath, lvl);
-                System.out.println("hasCoursesWithMoreThan20Marks? " + hasCoursesWithMoreThan30Marks(marksPerCourse));
+                readAndManipulateExcel(filePath, lvl, mgp);
+                mgp = false;
+                System.out.println("hasCoursesWithMoreThan30Marks? " + hasCoursesWithMoreThan30Marks(marksPerCourse));
 
                 while (hasCoursesWithMoreThan30Marks(marksPerCourse)) {
                     academicYear = decreaseAcademicYear(academicYear);
@@ -62,7 +62,7 @@ public class ExcelHandler {
                         System.out.println("optionalFile2 : " + optionalFile2.get().getFilePath());
 
                         filePath = optionalFile2.get().getFilePath();
-                        readAndManipulateExcel(filePath, lvl);
+                        readAndManipulateExcel(filePath, lvl, mgp);
                     } else {
                         System.out.println("No file found for academic year: " + academicYear);
                         break; // Exit loop if no file is found
@@ -121,7 +121,7 @@ public class ExcelHandler {
         }
     }
 
-    public void readAndManipulateExcel(String fileName, ClassLevel classLevel) {
+    public void readAndManipulateExcel(String fileName, ClassLevel classLevel, Boolean mgpOkay) {
         setCourses(classLevel);
         try {
             // Build the full path to the Excel file
@@ -202,7 +202,7 @@ public class ExcelHandler {
                                 }
                             }
 
-                            if (cell.getCellType() == CellType.STRING && Objects.equals(cell.getStringCellValue(), "MGP")){
+                            if (mgpOkay && cell.getCellType() == CellType.STRING && Objects.equals(cell.getStringCellValue(), "MGP")){
                                 int k = j;
                                 int l = i+2;
                                 for (Map.Entry<String, String> entry : idsNames.entrySet()) {
@@ -219,6 +219,7 @@ public class ExcelHandler {
 
                                     l++;
                                 }
+                                mgpOkay = false;
                                 nameMarks = sortByDoubleValues(nameMarks);
                             }
                         }

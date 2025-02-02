@@ -39,7 +39,7 @@ public class AcademicFileController {
     }
 
     public void exampleUsage() {
-        excelHandler.readAndManipulateExcel("example.xlsx", ClassLevel.SRT4);
+        excelHandler.readAndManipulateExcel("example.xlsx", ClassLevel.SRT4, true);
     }
 
     @GetMapping("/{filename:.+}")
@@ -78,7 +78,7 @@ public class AcademicFileController {
 
         // Convert the category String to FileCategory enum
         FileCategory fileCategory = null;
-        excelHandler.mainFunction( ClassLevel.SRT4, Semester.SEMESTER1);
+        excelHandler.mainFunction( ClassLevel.SRT4, Semester.SEMESTER1, true);
         if (category != null && !category.isEmpty()) {
             try {
                 fileCategory = FileCategory.valueOf(category); // Convert to enum
