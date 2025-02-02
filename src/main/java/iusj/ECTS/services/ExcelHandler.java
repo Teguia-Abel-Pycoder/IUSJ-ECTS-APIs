@@ -213,6 +213,8 @@ public class ExcelHandler {
                                     }else{
                                         double mgp = Double.parseDouble(sheet.getRow(l).getCell(k).getStringCellValue());
                                             nameMarks.put(entry.getValue(), mgp);
+                                            System.out.println("ids ---  Name: " + entry.getKey() + " --- " + entry.getValue());
+                                            System.out.println("MGP: " + mgp);
                                     }
 
                                     l++;
@@ -223,10 +225,10 @@ public class ExcelHandler {
                 }
 
             }
-            System.out.println("Extracted IDs and Names:");
-            for (Map.Entry<String, Double> entry : nameMarks.entrySet()) {
-                System.out.println("Name: " + entry.getKey() + ", Mark: " + entry.getValue());
-            }
+//            System.out.println("Extracted Names and Marks:");
+//            for (Map.Entry<String, Double> entry : nameMarks.entrySet()) {
+//                System.out.println("Name: " + entry.getKey() + ", Mark: " + entry.getValue());
+//            }
 //            System.out.println("Marks per Course:");
 //            marksPerCourse.forEach((course, marks) -> {
 //                System.out.println(course + " -> " + marks);
@@ -265,7 +267,7 @@ public class ExcelHandler {
             currentRow++;
             row = sheet.getRow(currentRow); // Move to the next row
         }
-
+        idsNames = sortByValues(idsNames);;
         // Print the content of the idsNames map
 //        System.out.println("Extracted IDs and Names:");
 //        for (Map.Entry<String, String> entry : idsNames.entrySet()) {
@@ -273,5 +275,13 @@ public class ExcelHandler {
 //        }
 
         return idsNames;
+    }
+    public static Map<String, String> sortByValues(Map<String, String> map) {
+        return map.entrySet()
+                .stream()
+                .sorted(Map.Entry.comparingByValue()) // Sorting by values
+                .collect(LinkedHashMap::new,
+                        (m, e) -> m.put(e.getKey(), e.getValue()),
+                        Map::putAll);
     }
 }
