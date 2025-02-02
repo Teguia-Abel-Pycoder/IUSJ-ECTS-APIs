@@ -219,6 +219,7 @@ public class ExcelHandler {
 
                                     l++;
                                 }
+                                nameMarks = sortByDoubleValues(nameMarks);
                             }
                         }
                     }
@@ -280,6 +281,14 @@ public class ExcelHandler {
         return map.entrySet()
                 .stream()
                 .sorted(Map.Entry.comparingByValue()) // Sorting by values
+                .collect(LinkedHashMap::new,
+                        (m, e) -> m.put(e.getKey(), e.getValue()),
+                        Map::putAll);
+    }
+    public static Map<String, Double> sortByDoubleValues(Map<String, Double> map) {
+        return map.entrySet()
+                .stream()
+                .sorted(Map.Entry.comparingByKey()) // Sort by values (marks)
                 .collect(LinkedHashMap::new,
                         (m, e) -> m.put(e.getKey(), e.getValue()),
                         Map::putAll);
