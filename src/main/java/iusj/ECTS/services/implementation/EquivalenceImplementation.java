@@ -8,8 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -112,4 +114,41 @@ public class EquivalenceImplementation implements EquivalenceService {
         equivalenceRepository.save(equivalence);
         return ResponseEntity.ok("School name updated successfully");
     }
+
+    @Override
+    public Map<String, String> convertEquivalences(Map<String, String> studentGrades, String schoolName, String classType) {
+        Optional<Equivalence> optionalEquivalence = equivalenceRepository.findEquivalenceBySchoolName(schoolName);
+
+        if (optionalEquivalence.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Equivalence not found");
+        }
+
+        Equivalence equivalence = optionalEquivalence.get();
+        Map<String, List<String>> coursesMap;
+
+        if ("isi".equalsIgnoreCase(classType)) {
+            coursesMap = equivalence.getIsiCourses();
+        } else if ("srt".equalsIgnoreCase(classType)) {
+            coursesMap = equivalence.getSrtCourses();
+        } else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid course type. Use 'isi' or 'srt'");
+        }
+
+        if (coursesMap == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Equivalence data is missing for the given class type");
+        }
+
+        Map<String, String> result = new HashMap<>();
+
+        studentGrades.forEach((key, value) -> {
+            List<String> equivalentCourses = coursesMap.get(key);
+            if (equivalentCourses != null) {
+                equivalentCourses.forEach(course -> result.put(course, value));
+            }
+        });
+
+        return result;
+    }
+
+
 }

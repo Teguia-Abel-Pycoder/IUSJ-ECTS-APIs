@@ -95,7 +95,7 @@ public class PercentileService {
         int C_end = B_end + (int) Math.round(totalSize * 0.3);  // 30%
         int D_end = C_end + (int) Math.round(totalSize * 0.25);  // 25%
 
-        // Assign marks to categories
+        // Assign marks to categorize
         for (int i = 0; i < A_end; i++) {
             gradedMarks.get("A").add(myList.get(i));
         }

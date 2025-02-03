@@ -4,6 +4,7 @@ import iusj.ECTS.enumerations.ClassLevel;
 import iusj.ECTS.enumerations.FileCategory;
 import iusj.ECTS.enumerations.Semester;
 import iusj.ECTS.models.AcademicFile;
+import iusj.ECTS.services.EquivalenceService;
 import iusj.ECTS.services.ExcelHandler;
 import iusj.ECTS.services.FileHandler;
 import iusj.ECTS.services.FileService;
@@ -18,7 +19,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.net.MalformedURLException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/iusj-ects/api/file")
@@ -32,6 +35,8 @@ public class AcademicFileController {
 
     @Autowired
     private FileService fileService;
+    @Autowired
+    private EquivalenceService equivalenceService;
 
     @PostMapping("/upload")
     public String handleFileUpload(@RequestParam("file") MultipartFile file) {
@@ -78,7 +83,11 @@ public class AcademicFileController {
 
         // Convert the category String to FileCategory enum
         FileCategory fileCategory = null;
-        excelHandler.mainFunction( ClassLevel.SRT4, Semester.SEMESTER1, true);
+        Map<String, String> studentGrades = new HashMap<>();
+        String schoolName = "UTT";
+        String classType = "srt";
+        Map<String, String> translatedCourses = equivalenceService.convertEquivalences(studentGrades, schoolName, classType);
+        excelHandler.mainFunction( ClassLevel.SRT4, Semester.SEMESTER1, true,  translatedCourses);
         if (category != null && !category.isEmpty()) {
             try {
                 fileCategory = FileCategory.valueOf(category); // Convert to enum

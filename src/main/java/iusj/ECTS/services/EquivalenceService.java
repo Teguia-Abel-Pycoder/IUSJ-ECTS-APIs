@@ -14,4 +14,5 @@ public interface EquivalenceService {
     ResponseEntity<String> addCourse(Long id, String type, Map<String, List<String>> newCourses);
     ResponseEntity<String> removeCourse(Long id, String type, Map<String, List<String>> coursesToRemove);
     ResponseEntity<String> updateSchoolName(Long id, String newSchoolName);
+    Map<String, String> convertEquivalences(Map<String, String> studentGrades, String schoolName, String classType);
 }

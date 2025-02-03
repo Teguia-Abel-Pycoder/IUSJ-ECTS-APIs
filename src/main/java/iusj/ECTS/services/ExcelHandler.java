@@ -33,13 +33,15 @@ public class ExcelHandler {
     Map<String, String> idsNames = new HashMap<>();
     Map<String, Double> nameMarks = new HashMap<>();
     Map<String, ArrayList<Double>> marksPerCourse = new HashMap<>();
+    @Autowired
+    private PercentileService percentileService;
     public static String getCurrentAcademicYear() {
         int currentYear = Year.now().getValue(); // Get the current year (e.g., 2025)
         int startYear = currentYear - 1;        // Academic year starts from the previous year
         int endYear = currentYear;             // Ends at the current year
         return startYear + "-" + endYear;      // Format as "YYYY-YYYY"
     }
-    public void mainFunction(ClassLevel lvl, Semester semester, Boolean mgp){
+    public void mainFunction(ClassLevel lvl, Semester semester, Boolean mgp, Map<String, String> translatedCourses){
             Optional<AcademicFile> optionalFile = academicFileRepository.findPvByAcademicYearAndClassLevelAndSemesterAndCategory("2020-2021", lvl, semester, FileCategory.PV);
             if (optionalFile.isPresent()) {
                 System.out.println("File info: " + optionalFile);
@@ -67,12 +69,12 @@ public class ExcelHandler {
                         System.out.println("No file found for academic year: " + academicYear);
                         break; // Exit loop if no file is found
                     }
-
                 }
-
-            } else {
+            }
+            else {
                 System.out.println("No file found with the specified criteria.");
             }
+
     }
     public static String decreaseAcademicYear(String academicYear) {
         // Split the academic year into start and end years
@@ -293,5 +295,11 @@ public class ExcelHandler {
                 .collect(LinkedHashMap::new,
                         (m, e) -> m.put(e.getKey(), e.getValue()),
                         Map::putAll);
+    }
+
+    public void compute(Map<String, ArrayList<Double>> marksPerCourses){
+        marksPerCourses.forEach((key, value) ->{
+            percentileService.gradePercentileComparism();
+        });
     }
 }
