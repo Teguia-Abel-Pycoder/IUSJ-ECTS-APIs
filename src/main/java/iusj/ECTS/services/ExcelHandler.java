@@ -53,8 +53,7 @@ public class ExcelHandler {
                 while (hasCoursesWithMoreThan30Marks(marksPerCourse)) {
                     academicYear = decreaseAcademicYear(academicYear);
 
-                    System.out.println("True:=======================================================================");
-                    System.out.println("academic year: " + academicYear);
+                    
 
                     Optional<AcademicFile> optionalFile2 = academicFileRepository.findPvByAcademicYearAndClassLevelAndSemesterAndCategory(
                             academicYear, lvl, semester, FileCategory.PV
@@ -72,6 +71,11 @@ public class ExcelHandler {
                 }
                 ArrayList<Double> marksList = new ArrayList<>(nameMarks.values());
                 Map<String, Double> result = compute(marksPerCourse, translatedCourses,studentMgp,marksList);
+                System.out.println("=======================================================================");
+                System.out.println("=======================================================================");
+                System.out.println("=======================================================================");
+                System.out.println("=======================================================================");
+                System.out.println("Final result: " + result);
 
             }
             else {

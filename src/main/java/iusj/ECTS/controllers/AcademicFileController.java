@@ -86,8 +86,9 @@ public class AcademicFileController {
         Map<String, String> studentGrades = new HashMap<>();
         String schoolName = "UTT";
         String classType = "srt";
+        double studentMgp = 3.12;
         Map<String, String> translatedCourses = equivalenceService.convertEquivalences(studentGrades, schoolName, classType);
-        excelHandler.mainFunction( ClassLevel.SRT4, Semester.SEMESTER1, true,  translatedCourses);
+        excelHandler.mainFunction( ClassLevel.SRT4, Semester.SEMESTER1, true,  translatedCourses, studentMgp);
         if (category != null && !category.isEmpty()) {
             try {
                 fileCategory = FileCategory.valueOf(category); // Convert to enum
