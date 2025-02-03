@@ -114,8 +114,8 @@ public class PercentileService {
 
         return gradedMarks;
     }
-    public void gradePercentileComparism(String courseName, String grade, Map<String, ArrayList<Double>> gradedMarks, double studentMgp){
-        marksPercentile( gradedMarks.get(grade),  mgpPercentile(gradedMarks.get(grade), studentMgp) );
+    public double gradePercentileComparism(String courseName, String grade, Map<String, ArrayList<Double>> gradedMarks, double studentMgp, ArrayList<Double> mgps){
+        return marksPercentile( gradedMarks.get(grade),  mgpPercentile(mgps, studentMgp) );
     }
 
 

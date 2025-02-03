@@ -41,7 +41,7 @@ public class ExcelHandler {
         int endYear = currentYear;             // Ends at the current year
         return startYear + "-" + endYear;      // Format as "YYYY-YYYY"
     }
-    public void mainFunction(ClassLevel lvl, Semester semester, Boolean mgp, Map<String, String> translatedCourses){
+    public void mainFunction(ClassLevel lvl, Semester semester, Boolean mgp, Map<String, String> translatedCourses, double studentMgp){
             Optional<AcademicFile> optionalFile = academicFileRepository.findPvByAcademicYearAndClassLevelAndSemesterAndCategory("2020-2021", lvl, semester, FileCategory.PV);
             if (optionalFile.isPresent()) {
                 System.out.println("File info: " + optionalFile);
@@ -70,6 +70,9 @@ public class ExcelHandler {
                         break; // Exit loop if no file is found
                     }
                 }
+                ArrayList<Double> marksList = new ArrayList<>(nameMarks.values());
+                Map<String, Double> result = compute(marksPerCourse, translatedCourses,studentMgp,marksList);
+
             }
             else {
                 System.out.println("No file found with the specified criteria.");
@@ -297,9 +300,11 @@ public class ExcelHandler {
                         Map::putAll);
     }
 
-    public void compute(Map<String, ArrayList<Double>> marksPerCourses){
+    public Map<String, Double> compute(Map<String, ArrayList<Double>> marksPerCourses, Map<String, String> translatedCourses, double stdtMgp, ArrayList<Double> mgps){
+        Map<String, Double> result = new HashMap<>();
         marksPerCourses.forEach((key, value) ->{
-            percentileService.gradePercentileComparism();
+            result.put(key, percentileService.gradePercentileComparism(key, translatedCourses.get(key), percentileService.myPercentile(value), stdtMgp, mgps));
         });
+        return result;
     }
 }
