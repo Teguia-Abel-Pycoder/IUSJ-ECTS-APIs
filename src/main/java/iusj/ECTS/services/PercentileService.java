@@ -28,44 +28,36 @@ public class PercentileService {
     public static int mgpPercentile(ArrayList<Double> values, double studentMgp) {
         ArrayList<Double> deciles = new ArrayList<>();
 
+        // Compute 9 deciles (indices 0 to 8)
         for (int i = 0; i < 9; i++) {
             double k = (i + 1) / 10.0;  // 0.1, 0.2, ..., 0.9
             double percentileValue = calculatePercentile(values, k);
             deciles.add(percentileValue);
         }
 
-        if(studentMgp>=deciles.get(0)){
+        if (studentMgp >= deciles.get(0)) {
             return 0;
-        } else if ((studentMgp >= deciles.get(1)) && (studentMgp < deciles.get(0))) {
+        } else if (studentMgp >= deciles.get(1)) {
             return 1;
-        }
-        else if ((studentMgp >= deciles.get(2)) && (studentMgp < deciles.get(1))) {
+        } else if (studentMgp >= deciles.get(2)) {
             return 2;
-        }
-        else if ((studentMgp >= deciles.get(3)) && (studentMgp < deciles.get(2))) {
+        } else if (studentMgp >= deciles.get(3)) {
             return 3;
-        }
-        else if ((studentMgp >= deciles.get(4)) && (studentMgp < deciles.get(3))) {
+        } else if (studentMgp >= deciles.get(4)) {
             return 4;
-        }
-        else if ((studentMgp >= deciles.get(5)) && (studentMgp < deciles.get(4))) {
+        } else if (studentMgp >= deciles.get(5)) {
             return 5;
-        }
-        else if ((studentMgp >= deciles.get(6)) && (studentMgp < deciles.get(5))) {
+        } else if (studentMgp >= deciles.get(6)) {
             return 6;
-        }
-        else if ((studentMgp >= deciles.get(7)) && (studentMgp < deciles.get(6))) {
+        } else if (studentMgp >= deciles.get(7)) {
             return 7;
-        }
-        else if ((studentMgp >= deciles.get(8)) && (studentMgp < deciles.get(7))) {
+        } else if (studentMgp >= deciles.get(8)) {
             return 8;
+        } else {
+            return 9; // If below all deciles, assign the lowest percentile
         }
-        else if ((studentMgp >= deciles.get(9)) && (studentMgp < deciles.get(8))) {
-            return 9;
-        }
-
-        return 0;
     }
+
     public static Double marksPercentile(ArrayList<Double> values, int mgpIndex ) {
         ArrayList<Double> deciles = new ArrayList<>();
 

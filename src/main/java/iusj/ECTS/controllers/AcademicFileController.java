@@ -84,9 +84,16 @@ public class AcademicFileController {
         // Convert the category String to FileCategory enum
         FileCategory fileCategory = null;
         Map<String, String> studentGrades = new HashMap<>();
+        studentGrades.put("Ingénierie financière de l'entreprise", "E");
+        studentGrades.put("Anglais - Niveau pratique B2", "D");
+        studentGrades.put("Systèmes sans fil", "D");
+        studentGrades.put("Services Réseaux", "D");
+        studentGrades.put("Introduction à l'internet des objets", "E");
+        studentGrades.put("S'initier à la Sécurité des Systèmes d'Information", "D");
+
         String schoolName = "UTT";
         String classType = "srt";
-        double studentMgp = 3.12;
+        double studentMgp = 1.12;
         Map<String, String> translatedCourses = equivalenceService.convertEquivalences(studentGrades, schoolName, classType);
         excelHandler.mainFunction( ClassLevel.SRT4, Semester.SEMESTER1, true,  translatedCourses, studentMgp);
         if (category != null && !category.isEmpty()) {

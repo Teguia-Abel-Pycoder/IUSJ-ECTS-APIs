@@ -53,7 +53,7 @@ public class ExcelHandler {
                 while (hasCoursesWithMoreThan30Marks(marksPerCourse)) {
                     academicYear = decreaseAcademicYear(academicYear);
 
-                    
+
 
                     Optional<AcademicFile> optionalFile2 = academicFileRepository.findPvByAcademicYearAndClassLevelAndSemesterAndCategory(
                             academicYear, lvl, semester, FileCategory.PV
