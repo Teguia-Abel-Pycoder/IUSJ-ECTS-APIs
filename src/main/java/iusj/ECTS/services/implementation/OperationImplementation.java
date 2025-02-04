@@ -15,6 +15,11 @@ public class OperationImplementation implements OperationService {
     private OperationRepository operationRepository;
     @Autowired private ExcelHandler excelHandler;
     public Operation createOperation(Operation operation) {
+        System.out.println("=======================================================================");
+        System.out.println("=======================================================================");
+        System.out.println("=======================================================================");
+        System.out.println("=======================================================================");
+        System.out.println("The GRADES"+ operation.getGrades());
         Map<String, Double> result = excelHandler.mainFunction(operation.getClassLevel(), operation.getSemester(), true, operation.getGrades(), operation.getStudentMgp());
         operation.setResult(result);
         return operationRepository.save(operation);

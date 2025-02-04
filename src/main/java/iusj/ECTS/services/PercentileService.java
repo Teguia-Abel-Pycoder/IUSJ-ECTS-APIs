@@ -7,6 +7,9 @@ import java.util.*;
 @Service
 public class PercentileService {
     private static double calculatePercentile(ArrayList<Double> myList, double percentile) {
+        if (myList == null || myList.isEmpty()) {
+            throw new IllegalArgumentException("List cannot be null or empty.");
+        }
         // Sort the list in ascending order
         Collections.sort(myList);
 

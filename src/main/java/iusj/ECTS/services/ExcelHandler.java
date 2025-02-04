@@ -71,10 +71,7 @@ public class ExcelHandler {
                 }
                 ArrayList<Double> marksList = new ArrayList<>(nameMarks.values());
                 Map<String, Double> result = compute(marksPerCourse, translatedCourses,studentMgp,marksList);
-                System.out.println("=======================================================================");
-                System.out.println("=======================================================================");
-                System.out.println("=======================================================================");
-                System.out.println("=======================================================================");
+
                 System.out.println("Final result: " + result);
                 return  result;
             }
