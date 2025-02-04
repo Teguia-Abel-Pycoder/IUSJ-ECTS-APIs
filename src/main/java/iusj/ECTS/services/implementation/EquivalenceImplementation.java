@@ -24,6 +24,11 @@ public class EquivalenceImplementation implements EquivalenceService {
 
     @Override
     public Equivalence createEquivalence(Equivalence equivalence) {
+        Optional<Equivalence> optionalEquivalence = equivalenceRepository.findEquivalenceBySchoolName(equivalence.getSchoolName());
+
+        if (optionalEquivalence.isPresent()) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Equivalence for " + equivalence.getSchoolName() + " already exists!");
+        }
         return equivalenceRepository.save(equivalence);
     }
 
@@ -107,7 +112,11 @@ public class EquivalenceImplementation implements EquivalenceService {
         if (optionalEquivalence.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Equivalence not found");
         }
+        Optional<Equivalence> optionalEquivalence2 = equivalenceRepository.findEquivalenceBySchoolName(newSchoolName);
 
+        if (optionalEquivalence2.isPresent()) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Equivalence for " + newSchoolName + " already exists!");
+        }
         Equivalence equivalence = optionalEquivalence.get();
         equivalence.setSchoolName(newSchoolName);
 

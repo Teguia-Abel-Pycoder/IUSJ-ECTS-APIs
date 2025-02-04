@@ -93,7 +93,7 @@ public class AcademicFileController {
 
         String schoolName = "UTT";
         String classType = "srt";
-        double studentMgp = 1.12;
+        double studentMgp = 3.55;
         Map<String, String> translatedCourses = equivalenceService.convertEquivalences(studentGrades, schoolName, classType);
         excelHandler.mainFunction( ClassLevel.SRT4, Semester.SEMESTER1, true,  translatedCourses, studentMgp);
         if (category != null && !category.isEmpty()) {

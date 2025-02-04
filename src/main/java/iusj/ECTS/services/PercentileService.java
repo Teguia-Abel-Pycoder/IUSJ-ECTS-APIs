@@ -26,6 +26,7 @@ public class PercentileService {
     }
 
     public static int mgpPercentile(ArrayList<Double> values, double studentMgp) {
+
         ArrayList<Double> deciles = new ArrayList<>();
 
         // Compute 9 deciles (indices 0 to 8)
@@ -58,17 +59,28 @@ public class PercentileService {
         }
     }
 
-    public static Double marksPercentile(ArrayList<Double> values, int mgpIndex ) {
+    public static Double marksPercentile(ArrayList<Double> values, int mgpIndex) {
         ArrayList<Double> deciles = new ArrayList<>();
 
-        for (int i = 0; i < 9; i++) {
-            double k = (i + 1) / 10.0;  // 0.1, 0.2, ..., 0.9
+        // Compute 10 deciles (0.1 to 1.0)
+        for (int i = 0; i < 10; i++) {  // Change from 9 to 10
+            double k = (i + 1) / 10.0;  // 0.1, 0.2, ..., 1.0
             double percentileValue = calculatePercentile(values, k);
             deciles.add(percentileValue);
         }
 
+        Collections.sort(deciles, Collections.reverseOrder());
+        deciles.forEach(decile -> {
+            System.out.println("\nDecile: " + decile);
+        });
+        // Ensure mgpIndex is within bounds (0 to 9)
+        if (mgpIndex < 0 || mgpIndex >= deciles.size()) {
+            throw new IndexOutOfBoundsException("mgpIndex must be between 0 and 9. Given: " + mgpIndex);
+        }
+
         return deciles.get(mgpIndex);
     }
+
     public Map<String, ArrayList<Double>> myPercentile(ArrayList<Double> myList) {
         Map<String, ArrayList<Double>> gradedMarks = new HashMap<>();
         gradedMarks.put("A", new ArrayList<>());
