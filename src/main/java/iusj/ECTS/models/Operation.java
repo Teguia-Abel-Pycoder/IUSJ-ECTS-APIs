@@ -19,6 +19,7 @@ public class Operation {
     private Long operationId;
 
     private String studentName;
+    private String schoolName;
 
     @Enumerated(EnumType.STRING)
     private ClassLevel classLevel;
@@ -55,6 +56,13 @@ public class Operation {
 
     public void setStudentName(String studentName) {
         this.studentName = studentName;
+    }
+    public String getSchoolName() {
+        return schoolName;
+    }
+
+    public void setSchoolName(String schoolName) {
+        this.schoolName = schoolName;
     }
 
     public ClassLevel getClassLevel() {
