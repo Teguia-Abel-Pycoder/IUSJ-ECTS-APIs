@@ -122,7 +122,7 @@ public class PercentileService {
         return gradedMarks;
     }
     public double gradePercentileComparism(String courseName, String grade, Map<String, ArrayList<Double>> gradedMarks, double studentMgp, ArrayList<Double> mgps){
-        return marksPercentile( gradedMarks.get(grade),  mgpPercentile(mgps, studentMgp) );
+        return (double) Math.round(marksPercentile(gradedMarks.get(grade), mgpPercentile(mgps, studentMgp)) * 100) /100;
     }
 
 

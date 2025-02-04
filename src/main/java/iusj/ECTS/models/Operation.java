@@ -19,6 +19,7 @@ public class Operation {
     private Long operationId;
 
     private String studentName;
+    private String studentID;
     private String schoolName;
 
     @Enumerated(EnumType.STRING)
@@ -56,6 +57,13 @@ public class Operation {
 
     public void setStudentName(String studentName) {
         this.studentName = studentName;
+    }
+    public String getStudentID() {
+        return studentID;
+    }
+
+    public void setStudentID(String studentID) {
+        this.studentID = studentID;
     }
     public String getSchoolName() {
         return schoolName;
