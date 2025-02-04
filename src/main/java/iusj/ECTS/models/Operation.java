@@ -39,4 +39,61 @@ public class Operation {
     private Map<String, Double> result;
 
     private double studentMgp;
+    // Getters and Setters
+
+    public Long getOperationId() {
+        return operationId;
+    }
+
+    public void setOperationId(Long operationId) {
+        this.operationId = operationId;
+    }
+
+    public String getStudentName() {
+        return studentName;
+    }
+
+    public void setStudentName(String studentName) {
+        this.studentName = studentName;
+    }
+
+    public ClassLevel getClassLevel() {
+        return classLevel;
+    }
+
+    public void setClassLevel(ClassLevel classLevel) {
+        this.classLevel = classLevel;
+    }
+
+    public Semester getSemester() {
+        return semester;
+    }
+
+    public void setSemester(Semester semester) {
+        this.semester = semester;
+    }
+
+    public Map<String, String> getGrades() {
+        return grades;
+    }
+
+    public void setGrades(Map<String, String> grades) {
+        this.grades = grades;
+    }
+
+    public Map<String, Double> getResult() {
+        return result;
+    }
+
+    public void setResult(Map<String, Double> result) {
+        this.result = result;
+    }
+
+    public double getStudentMgp() {
+        return studentMgp;
+    }
+
+    public void setStudentMgp(double studentMgp) {
+        this.studentMgp = studentMgp;
+    }
 }

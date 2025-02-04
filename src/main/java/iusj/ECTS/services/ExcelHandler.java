@@ -41,7 +41,7 @@ public class ExcelHandler {
         int endYear = currentYear;             // Ends at the current year
         return startYear + "-" + endYear;      // Format as "YYYY-YYYY"
     }
-    public void mainFunction(ClassLevel lvl, Semester semester, Boolean mgp, Map<String, String> translatedCourses, double studentMgp){
+    public Map<String, Double> mainFunction(ClassLevel lvl, Semester semester, Boolean mgp, Map<String, String> translatedCourses, double studentMgp){
             Optional<AcademicFile> optionalFile = academicFileRepository.findPvByAcademicYearAndClassLevelAndSemesterAndCategory("2020-2021", lvl, semester, FileCategory.PV);
             if (optionalFile.isPresent()) {
                 System.out.println("File info: " + optionalFile);
@@ -76,12 +76,12 @@ public class ExcelHandler {
                 System.out.println("=======================================================================");
                 System.out.println("=======================================================================");
                 System.out.println("Final result: " + result);
-
+                return  result;
             }
             else {
                 System.out.println("No file found with the specified criteria.");
             }
-
+        return null;
     }
     public static String decreaseAcademicYear(String academicYear) {
         // Split the academic year into start and end years
