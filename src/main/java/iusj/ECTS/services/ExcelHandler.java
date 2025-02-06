@@ -29,10 +29,15 @@ public class ExcelHandler {
     @Autowired
     private AcademicFileRepository academicFileRepository;
     private Map<String, String> courses;
+    private Map<String, String> courses1;
     String academicYear = getCurrentAcademicYear();
     Map<String, String> idsNames = new HashMap<>();
     Map<String, Double> nameMarks = new HashMap<>();
+    Map<String, String> idsNames1 = new HashMap<>();
+    Map<String, Double> nameMarks1 = new HashMap<>();
     Map<String, ArrayList<Double>> marksPerCourse = new HashMap<>();
+    Map<String, ArrayList<Double>> marksPerCourse1 = new HashMap<>();
+
     @Autowired
     private PercentileService percentileService;
     public static String getCurrentAcademicYear() {
@@ -42,7 +47,7 @@ public class ExcelHandler {
         return startYear + "-" + endYear;      // Format as "YYYY-YYYY"
     }
     public Map<String, Double> mainFunction(ClassLevel lvl, Semester semester, Boolean mgp, Map<String, String> translatedCourses, double studentMgp){
-            Optional<AcademicFile> optionalFile = academicFileRepository.findPvByAcademicYearAndClassLevelAndSemesterAndCategory(academicYear, lvl, semester, FileCategory.PV);
+            Optional<AcademicFile> optionalFile = academicFileRepository.findPvByAcademicYearAndClassLevelAndSemesterAndCategory("2021-2022", lvl, semester, FileCategory.PV);
             if (optionalFile.isPresent()) {
                 System.out.println("File info: " + optionalFile);
                 String filePath = optionalFile.get().getFilePath();
@@ -72,7 +77,16 @@ public class ExcelHandler {
                 ArrayList<Double> marksList = new ArrayList<>(nameMarks.values());
                 Map<String, Double> result = compute(marksPerCourse, translatedCourses,studentMgp,marksList);
 
-                System.out.println("Final result: " + result);
+                System.out.println("============================================");
+                System.out.println("============================================");
+                System.out.println("============================================");
+                System.out.println("============================================");
+                System.out.println("============================================");
+                System.out.println("============================================");
+                System.out.println("Course and Marks:");
+                for (Map.Entry<String, Double> entry : result.entrySet()) {
+                    System.out.println("Course: " + entry.getKey() + ", Mark: " + entry.getValue());
+                }
                 return  result;
             }
             else {
@@ -96,13 +110,7 @@ public class ExcelHandler {
                 return optionalFile.get().getFilePath();
             }
         }
-        if(classLevel == ClassLevel.ISI3 && semester == Semester.SEMESTER2){
-            Optional<AcademicFile> optionalFile = academicFileRepository.findPvByAcademicYearAndClassLevelAndSemesterAndCategory(academicYear, classLevel, Semester.SEMESTER1, FileCategory.PV);
-            if (optionalFile.isPresent()) {
-                System.out.println("File info: " + optionalFile);
-                return optionalFile.get().getFilePath();
-            }
-        }
+
         if(classLevel == ClassLevel.ISI5 && semester == Semester.SEMESTER2){
             Optional<AcademicFile> optionalFile = academicFileRepository.findPvByAcademicYearAndClassLevelAndSemesterAndCategory(academicYear, classLevel, Semester.SEMESTER1, FileCategory.PV);
             if (optionalFile.isPresent()) {
@@ -110,13 +118,7 @@ public class ExcelHandler {
                 return optionalFile.get().getFilePath();
             }
         }
-        if(classLevel == ClassLevel.ISI3 && semester == Semester.SEMESTER2){
-            Optional<AcademicFile> optionalFile = academicFileRepository.findPvByAcademicYearAndClassLevelAndSemesterAndCategory(academicYear, classLevel, Semester.SEMESTER1, FileCategory.PV);
-            if (optionalFile.isPresent()) {
-                System.out.println("File info: " + optionalFile);
-                return optionalFile.get().getFilePath();
-            }
-        }
+
         if(classLevel == ClassLevel.ISI5 && semester == Semester.SEMESTER1){
             Optional<AcademicFile> optionalFile = academicFileRepository.findPvByAcademicYearAndClassLevelAndSemesterAndCategory(academicYear, ClassLevel.ISI4, Semester.SEMESTER2, FileCategory.PV);
             if (optionalFile.isPresent()) {
@@ -147,13 +149,7 @@ public class ExcelHandler {
                 return optionalFile.get().getFilePath();
             }
         }
-        if(classLevel == ClassLevel.SRT3 && semester == Semester.SEMESTER2){
-            Optional<AcademicFile> optionalFile = academicFileRepository.findPvByAcademicYearAndClassLevelAndSemesterAndCategory(academicYear, classLevel, Semester.SEMESTER1, FileCategory.PV);
-            if (optionalFile.isPresent()) {
-                System.out.println("File info: " + optionalFile);
-                return optionalFile.get().getFilePath();
-            }
-        }
+
         if(classLevel == ClassLevel.SRT5 && semester == Semester.SEMESTER2){
             Optional<AcademicFile> optionalFile = academicFileRepository.findPvByAcademicYearAndClassLevelAndSemesterAndCategory(academicYear, classLevel, Semester.SEMESTER1, FileCategory.PV);
             if (optionalFile.isPresent()) {
@@ -161,13 +157,7 @@ public class ExcelHandler {
                 return optionalFile.get().getFilePath();
             }
         }
-        if(classLevel == ClassLevel.SRT3 && semester == Semester.SEMESTER2){
-            Optional<AcademicFile> optionalFile = academicFileRepository.findPvByAcademicYearAndClassLevelAndSemesterAndCategory(academicYear, classLevel, Semester.SEMESTER1, FileCategory.PV);
-            if (optionalFile.isPresent()) {
-                System.out.println("File info: " + optionalFile);
-                return optionalFile.get().getFilePath();
-            }
-        }
+
         if(classLevel == ClassLevel.SRT5 && semester == Semester.SEMESTER1){
             Optional<AcademicFile> optionalFile = academicFileRepository.findPvByAcademicYearAndClassLevelAndSemesterAndCategory(academicYear, ClassLevel.SRT4, Semester.SEMESTER2, FileCategory.PV);
             if (optionalFile.isPresent()) {
@@ -261,7 +251,7 @@ public class ExcelHandler {
                                 foundMatricules = true; // Mark as processed
 
                                 // Extract data from subsequent rows
-                                Map<String, String> idsNames = extractIDnNamesPV(sheet, i + 2, j);
+                                Map<String, String> idsNames =  extractIDnNamesPV(sheet, i + 2, j);
                                 System.out.println("Extracted Data: " + idsNames);
 
                                 break; // Exit the inner loop
@@ -353,6 +343,137 @@ public class ExcelHandler {
             throw new RuntimeException("Failed to read or manipulate Excel file.", e);
         }
     }
+    public double readAndManipulateExcel1(String fileName, ClassLevel classLevel, Boolean mgpOkay, String name) {
+        Double studentMgp = 0.0;
+        setCourses(classLevel);
+        try {
+            // Build the full path to the Excel file
+            File excelFile = Paths.get(uploadDir, fileName).toFile();
+
+            // Open the file as an InputStream
+            FileInputStream fis = new FileInputStream(excelFile);
+
+            // Open the workbook
+            Workbook workbook = new XSSFWorkbook(fis);
+
+            // Get the first sheet
+            Sheet sheet = workbook.getSheetAt(0);
+
+            // Flag to track if "Matricules" has been found and processed
+            boolean foundMatricules = false;
+
+            for (int i = 0; i <= sheet.getLastRowNum(); i++) { // Iterate over rows
+                Row row = sheet.getRow(i);
+                if (row != null) {
+//                    System.out.println(  row.getRowNum() + ": number of physical (non-empty) cells: "+row.getPhysicalNumberOfCells());
+
+                    for (int j = 0; j < row.getLastCellNum(); j++) { // Iterate over cells in the row
+                        Cell cell = row.getCell(j);
+                        if (cell != null && cell.getCellType() == CellType.STRING) {
+                            if (!foundMatricules && Objects.equals(cell.getStringCellValue(), "Matricules")) {
+                                foundMatricules = true; // Mark as processed
+
+                                // Extract data from subsequent rows
+                                Map<String, String> idsNames = extractIDnNamesPV1(sheet, i + 2, j);
+                                System.out.println("Extracted Data: " + idsNames);
+
+                                break; // Exit the inner loop
+                            }
+                        }
+                    }
+                    if (foundMatricules) break; // Exit the outer loop after processing "Matricules"
+                }
+            }
+            for (int i = 0; i <= sheet.getLastRowNum(); i++) { // Iterate over rows
+                Row row = sheet.getRow(i);
+                if (row != null) {
+                    for (int j = 0; j < row.getLastCellNum(); j++) { // Iterate over cells in the row
+                        Cell cell = row.getCell(j);
+                        if (cell != null && cell.getCellType() == CellType.STRING) {
+
+                            if (cell.getCellType() == CellType.STRING && Objects.equals(cell.getStringCellValue(), "MATIERES")){
+                                int k = j+1;
+                                while(k < row.getLastCellNum()){
+                                    if (courses.containsValue(row.getCell(k).getStringCellValue())) {
+
+                                        int z = k;
+                                        int y = i+3;
+                                        String courseName = row.getCell(k).getStringCellValue();
+                                        marksPerCourse1.putIfAbsent(courseName, new ArrayList<>());
+
+                                        while (z < row.getLastCellNum()){
+
+                                            if(Objects.equals( sheet.getRow(i+1).getCell(z).getStringCellValue(), "M.Dis")){
+                                                for (int a = 0; a < idsNames1.values().size(); a++){
+                                                    if(sheet.getRow(y).getCell(z).getStringCellValue().isBlank() || sheet.getRow(y).getCell(z).getStringCellValue().isEmpty()){
+                                                        double mark = 0;
+                                                    }else{
+                                                        double mark = Double.parseDouble(sheet.getRow(y).getCell(z).getStringCellValue());
+                                                        if(mark >= 10.0){
+                                                            marksPerCourse1.get(courseName).add(mark);
+                                                        }
+                                                    }
+
+                                                    y++;
+                                                }
+                                                break;
+                                            }
+                                            z++;
+                                        }
+                                    }
+                                    k++;
+                                }
+                            }
+
+                            if (mgpOkay && cell.getCellType() == CellType.STRING && Objects.equals(cell.getStringCellValue(), "MGP")){
+                                int k = j;
+                                int l = i+2;
+                                for (Map.Entry<String, String> entry : idsNames1.entrySet()) {
+                                    System.out.println("Id: " + entry.getKey() + ", NAmeee: " + entry.getValue());
+                                }
+                                for (Map.Entry<String, String> entry : idsNames1.entrySet()) {
+
+                                    if(sheet.getRow(l).getCell(k).getStringCellValue().isBlank() || sheet.getRow(l).getCell(k).getStringCellValue().isEmpty()){
+                                        double mgp = 0;
+                                        nameMarks1.put(entry.getValue(), mgp);
+                                    }else{
+                                        double mgp = Double.parseDouble(sheet.getRow(l).getCell(k).getStringCellValue());
+                                        nameMarks1.put(entry.getValue(), mgp);
+//                                            System.out.println("ids ---  Name: " + entry.getKey() + " --- " + entry.getValue());
+//                                            System.out.println("MGP: " + mgp);
+                                    }
+
+                                    l++;
+                                }
+                                mgpOkay = false;
+                                nameMarks1 = sortByDoubleValues(nameMarks1);
+                                for (Map.Entry<String, Double> entry : nameMarks1.entrySet()) {
+                                    System.out.println("Name: " + entry.getKey() + ", Mark: " + entry.getValue());
+                                }
+                                studentMgp = nameMarks1.get(name);
+                            }
+
+                        }
+                    }
+                }
+
+            }
+            System.out.println("Extracted Names and Marks:");
+            for (Map.Entry<String, Double> entry : nameMarks1.entrySet()) {
+                System.out.println("Name: " + entry.getKey() + ", Mark: " + entry.getValue());
+            }
+//            System.out.println("Marks per Course:");
+//            marksPerCourse.forEach((course, marks) -> {
+//                System.out.println(course + " -> " + marks);
+//            });
+            workbook.close();
+            fis.close();
+
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to read or manipulate Excel file.", e);
+        }
+        return studentMgp;
+    }
     public boolean hasCoursesWithMoreThan30Marks(Map<String, ArrayList<Double>> marksCourses) {
         for (Map.Entry<String, ArrayList<Double>> entry : marksCourses.entrySet()) {
             String courseName = entry.getKey();
@@ -376,11 +497,14 @@ public class ExcelHandler {
             String id = row.getCell(column).getStringCellValue();
             String name = row.getCell(column + 1).getStringCellValue();
             idsNames.put(id, name);
+            idsNames1.put(id, name);
 
             currentRow++;
             row = sheet.getRow(currentRow); // Move to the next row
         }
-        idsNames = sortByValues(idsNames);;
+        idsNames = sortByValues(idsNames);
+        idsNames1 = sortByValues(idsNames1);;
+
         // Print the content of the idsNames map
 //        System.out.println("Extracted IDs and Names:");
 //        for (Map.Entry<String, String> entry : idsNames.entrySet()) {
@@ -388,6 +512,31 @@ public class ExcelHandler {
 //        }
 
         return idsNames;
+    }
+    private Map<String, String> extractIDnNamesPV1(Sheet sheet, int startRow, int column) {
+        int currentRow = startRow;
+        Row row = sheet.getRow(currentRow);
+
+        while (row != null && row.getCell(column) != null &&
+                row.getCell(column).getStringCellValue().length() > 2) {
+            String id = row.getCell(column).getStringCellValue();
+            String name = row.getCell(column + 1).getStringCellValue();
+            idsNames.put(id, name);
+            idsNames1.put(id, name);
+
+            currentRow++;
+            row = sheet.getRow(currentRow); // Move to the next row
+        }
+        idsNames = sortByValues(idsNames);
+        idsNames1 = sortByValues(idsNames1);;
+
+        // Print the content of the idsNames map
+//        System.out.println("Extracted IDs and Names:");
+//        for (Map.Entry<String, String> entry : idsNames.entrySet()) {
+//            System.out.println("ID: " + entry.getKey() + ", Name: " + entry.getValue());
+//        }
+
+        return idsNames1;
     }
     public static Map<String, String> sortByValues(Map<String, String> map) {
         return map.entrySet()
