@@ -51,7 +51,7 @@ public class Operation {
         this.operationId = operationId;
     }
 
-    public String getStudentName() {
+    public String getStudent0Name() {
         return studentName;
     }
 

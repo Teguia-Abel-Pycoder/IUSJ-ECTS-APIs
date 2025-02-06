@@ -42,7 +42,7 @@ public class ExcelHandler {
         return startYear + "-" + endYear;      // Format as "YYYY-YYYY"
     }
     public Map<String, Double> mainFunction(ClassLevel lvl, Semester semester, Boolean mgp, Map<String, String> translatedCourses, double studentMgp){
-            Optional<AcademicFile> optionalFile = academicFileRepository.findPvByAcademicYearAndClassLevelAndSemesterAndCategory("2020-2021", lvl, semester, FileCategory.PV);
+            Optional<AcademicFile> optionalFile = academicFileRepository.findPvByAcademicYearAndClassLevelAndSemesterAndCategory(academicYear, lvl, semester, FileCategory.PV);
             if (optionalFile.isPresent()) {
                 System.out.println("File info: " + optionalFile);
                 String filePath = optionalFile.get().getFilePath();
@@ -79,6 +79,110 @@ public class ExcelHandler {
                 System.out.println("No file found with the specified criteria.");
             }
         return null;
+    }
+
+    public String pvForMgp(ClassLevel classLevel, Semester semester){
+        if(classLevel == ClassLevel.ISI3 && semester == Semester.SEMESTER2){
+            Optional<AcademicFile> optionalFile = academicFileRepository.findPvByAcademicYearAndClassLevelAndSemesterAndCategory(academicYear, classLevel, Semester.SEMESTER1, FileCategory.PV);
+            if (optionalFile.isPresent()) {
+                System.out.println("File info: " + optionalFile);
+                return optionalFile.get().getFilePath();
+            }
+        }
+        if(classLevel == ClassLevel.ISI4 && semester == Semester.SEMESTER2){
+            Optional<AcademicFile> optionalFile = academicFileRepository.findPvByAcademicYearAndClassLevelAndSemesterAndCategory(academicYear, classLevel, Semester.SEMESTER1, FileCategory.PV);
+            if (optionalFile.isPresent()) {
+                System.out.println("File info: " + optionalFile);
+                return optionalFile.get().getFilePath();
+            }
+        }
+        if(classLevel == ClassLevel.ISI3 && semester == Semester.SEMESTER2){
+            Optional<AcademicFile> optionalFile = academicFileRepository.findPvByAcademicYearAndClassLevelAndSemesterAndCategory(academicYear, classLevel, Semester.SEMESTER1, FileCategory.PV);
+            if (optionalFile.isPresent()) {
+                System.out.println("File info: " + optionalFile);
+                return optionalFile.get().getFilePath();
+            }
+        }
+        if(classLevel == ClassLevel.ISI5 && semester == Semester.SEMESTER2){
+            Optional<AcademicFile> optionalFile = academicFileRepository.findPvByAcademicYearAndClassLevelAndSemesterAndCategory(academicYear, classLevel, Semester.SEMESTER1, FileCategory.PV);
+            if (optionalFile.isPresent()) {
+                System.out.println("File info: " + optionalFile);
+                return optionalFile.get().getFilePath();
+            }
+        }
+        if(classLevel == ClassLevel.ISI3 && semester == Semester.SEMESTER2){
+            Optional<AcademicFile> optionalFile = academicFileRepository.findPvByAcademicYearAndClassLevelAndSemesterAndCategory(academicYear, classLevel, Semester.SEMESTER1, FileCategory.PV);
+            if (optionalFile.isPresent()) {
+                System.out.println("File info: " + optionalFile);
+                return optionalFile.get().getFilePath();
+            }
+        }
+        if(classLevel == ClassLevel.ISI5 && semester == Semester.SEMESTER1){
+            Optional<AcademicFile> optionalFile = academicFileRepository.findPvByAcademicYearAndClassLevelAndSemesterAndCategory(academicYear, ClassLevel.ISI4, Semester.SEMESTER2, FileCategory.PV);
+            if (optionalFile.isPresent()) {
+                System.out.println("File info: " + optionalFile);
+                return optionalFile.get().getFilePath();
+            }
+        }
+        if(classLevel == ClassLevel.ISI4 && semester == Semester.SEMESTER1){
+            Optional<AcademicFile> optionalFile = academicFileRepository.findPvByAcademicYearAndClassLevelAndSemesterAndCategory(academicYear, ClassLevel.ISI3, Semester.SEMESTER2, FileCategory.PV);
+            if (optionalFile.isPresent()) {
+                System.out.println("File info: " + optionalFile);
+                return optionalFile.get().getFilePath();
+            }
+        }
+
+
+        if(classLevel == ClassLevel.SRT3 && semester == Semester.SEMESTER2){
+            Optional<AcademicFile> optionalFile = academicFileRepository.findPvByAcademicYearAndClassLevelAndSemesterAndCategory(academicYear, classLevel, Semester.SEMESTER1, FileCategory.PV);
+            if (optionalFile.isPresent()) {
+                System.out.println("File info: " + optionalFile);
+                return optionalFile.get().getFilePath();
+            }
+        }
+        if(classLevel == ClassLevel.SRT4 && semester == Semester.SEMESTER2){
+            Optional<AcademicFile> optionalFile = academicFileRepository.findPvByAcademicYearAndClassLevelAndSemesterAndCategory(academicYear, classLevel, Semester.SEMESTER1, FileCategory.PV);
+            if (optionalFile.isPresent()) {
+                System.out.println("File info: " + optionalFile);
+                return optionalFile.get().getFilePath();
+            }
+        }
+        if(classLevel == ClassLevel.SRT3 && semester == Semester.SEMESTER2){
+            Optional<AcademicFile> optionalFile = academicFileRepository.findPvByAcademicYearAndClassLevelAndSemesterAndCategory(academicYear, classLevel, Semester.SEMESTER1, FileCategory.PV);
+            if (optionalFile.isPresent()) {
+                System.out.println("File info: " + optionalFile);
+                return optionalFile.get().getFilePath();
+            }
+        }
+        if(classLevel == ClassLevel.SRT5 && semester == Semester.SEMESTER2){
+            Optional<AcademicFile> optionalFile = academicFileRepository.findPvByAcademicYearAndClassLevelAndSemesterAndCategory(academicYear, classLevel, Semester.SEMESTER1, FileCategory.PV);
+            if (optionalFile.isPresent()) {
+                System.out.println("File info: " + optionalFile);
+                return optionalFile.get().getFilePath();
+            }
+        }
+        if(classLevel == ClassLevel.SRT3 && semester == Semester.SEMESTER2){
+            Optional<AcademicFile> optionalFile = academicFileRepository.findPvByAcademicYearAndClassLevelAndSemesterAndCategory(academicYear, classLevel, Semester.SEMESTER1, FileCategory.PV);
+            if (optionalFile.isPresent()) {
+                System.out.println("File info: " + optionalFile);
+                return optionalFile.get().getFilePath();
+            }
+        }
+        if(classLevel == ClassLevel.SRT5 && semester == Semester.SEMESTER1){
+            Optional<AcademicFile> optionalFile = academicFileRepository.findPvByAcademicYearAndClassLevelAndSemesterAndCategory(academicYear, ClassLevel.SRT4, Semester.SEMESTER2, FileCategory.PV);
+            if (optionalFile.isPresent()) {
+                System.out.println("File info: " + optionalFile);
+                return optionalFile.get().getFilePath();
+            }
+        }
+        if(classLevel == ClassLevel.SRT4 && semester == Semester.SEMESTER1){
+            Optional<AcademicFile> optionalFile = academicFileRepository.findPvByAcademicYearAndClassLevelAndSemesterAndCategory(academicYear, ClassLevel.SRT3, Semester.SEMESTER2, FileCategory.PV);
+            if (optionalFile.isPresent()) {
+                System.out.println("File info: " + optionalFile);
+                return optionalFile.get().getFilePath();
+            }
+        }
+        return "Out of range!";
     }
     public static String decreaseAcademicYear(String academicYear) {
         // Split the academic year into start and end years
@@ -228,6 +332,7 @@ public class ExcelHandler {
                                 mgpOkay = false;
                                 nameMarks = sortByDoubleValues(nameMarks);
                             }
+
                         }
                     }
                 }
