@@ -1,12 +1,15 @@
 package iusj.ECTS.models;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import iusj.ECTS.enumerations.ClassLevel;
+import iusj.ECTS.enumerations.OperationStatus;
 import iusj.ECTS.enumerations.Semester;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
 import java.util.Map;
 
 @Entity
@@ -21,6 +24,8 @@ public class Operation {
     private String studentName;
     private String studentID;
     private String schoolName;
+    private OperationStatus status;
+
 
     @Enumerated(EnumType.STRING)
     private ClassLevel classLevel;
@@ -39,6 +44,9 @@ public class Operation {
     @MapKeyColumn(name = "subject")
     @Column(name = "result_value")
     private Map<String, Double> result;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy HH:mm:ss", timezone = "UTC")
+    private Date dueDate;
 
     private double studentMgp;
     // Getters and Setters
