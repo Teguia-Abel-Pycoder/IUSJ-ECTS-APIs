@@ -6,6 +6,9 @@ public enum ClassLevel {
     ISI5,
     SRT3,
     SRT4,
-    SRT5
+    SRT5,
+    ING4,
+    ING3,
+    ING5
 
 }

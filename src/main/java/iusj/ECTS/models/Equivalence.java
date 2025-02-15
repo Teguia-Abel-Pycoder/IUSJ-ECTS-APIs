@@ -2,6 +2,7 @@ package iusj.ECTS.models;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import iusj.ECTS.enumerations.ClassLevel;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -21,6 +22,15 @@ public class Equivalence {
     private Long equivalenceId;
 
     private String schoolName;
+    private ClassLevel academicLevel;
+
+    public ClassLevel getAcademicLevel() {
+        return academicLevel;
+    }
+
+    public void setAcademicLevel(ClassLevel academicLevel) {
+        this.academicLevel = academicLevel;
+    }
 
     @Lob
     @Column(columnDefinition = "TEXT")

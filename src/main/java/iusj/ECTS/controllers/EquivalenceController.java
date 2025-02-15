@@ -1,5 +1,6 @@
 package iusj.ECTS.controllers;
 
+import iusj.ECTS.enumerations.ClassLevel;
 import iusj.ECTS.models.Equivalence;
 import iusj.ECTS.repositories.EquivalenceRepository;
 import iusj.ECTS.services.EquivalenceService;
@@ -28,12 +29,23 @@ public class EquivalenceController {
     public ResponseEntity<List<Equivalence>> getAllEquivalences() {
         return ResponseEntity.ok(equivalenceService.getAllEquivalences());
     }
-
+    @RequestMapping(value = "/add-equivalence", method = RequestMethod.OPTIONS)
+    public ResponseEntity<?> handlePreflight() {
+        return ResponseEntity.ok().build();
+    }
     @GetMapping("/get-equivalence/{id}")
     public ResponseEntity<Equivalence> getEquivalenceById(@PathVariable Long id) {
         return ResponseEntity.ok(equivalenceService.getEquivalenceById(id));
     }
+    @PostMapping("/add-equivalence")
+    public ResponseEntity<String> addEquivalence(
+            @RequestParam String schoolName,
+            @RequestParam ClassLevel academicLevel,
+            @RequestParam String type,
+            @RequestBody Map<String, List<String>> newCourses) {
 
+        return equivalenceService.addEquivalence(schoolName, academicLevel, type, newCourses);
+    }
 
     @PostMapping("/{id}/add-course")
     public ResponseEntity<String> addCourse(
@@ -52,7 +64,7 @@ public class EquivalenceController {
     @PutMapping("/{id}/update-school")
     public ResponseEntity<String> updateSchoolName(
             @PathVariable Long id,
-            @RequestParam("newName") String newSchoolName) {
-        return equivalenceService.updateSchoolName(id, newSchoolName);
+            @RequestParam("schoolName") String newSchoolName, @RequestParam("academicLevel") ClassLevel academicLevel) {
+        return equivalenceService.updateSchoolName(id, newSchoolName, academicLevel);
     }
 }

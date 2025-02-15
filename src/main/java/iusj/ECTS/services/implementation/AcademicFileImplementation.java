@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.transaction.Transactional;
+
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,10 +32,13 @@ public class AcademicFileImplementation implements FileService {
         validateFileUpload(excelFile);
 
         academicFile.setFilePath(fileHandler.handleFileUpload(excelFile));
+        academicFile.setUploadedTime(new Date()); // Set current timestamp
+
         checkForDuplicatePv(academicFile);
 
         return academicFileRepository.save(academicFile);
     }
+
 
     @Override
     public List<AcademicFile> AllPvs(FileCategory category, ClassLevel classLevel, Semester semester, String academicYear) {
@@ -73,16 +78,20 @@ public class AcademicFileImplementation implements FileService {
 
     @Override
     @Transactional
-    public AcademicFile updatePv(MultipartFile excelFile, AcademicFile academicFile) {
-        AcademicFile existingAcademicFile = academicFileRepository.findById(academicFile.getFileId())
-                .orElseThrow(() -> new RuntimeException("PV not found with id: " + academicFile.getFileId()));
+    public AcademicFile updatePv(MultipartFile excelFile, AcademicFile academicFile, Long pvId) {
+        AcademicFile existingAcademicFile = academicFileRepository.findById(pvId)
+                .orElseThrow(() -> new RuntimeException("PV not found with id: " + pvId));
 
+        // Only process the file if it's provided and not empty
         if (excelFile != null && !excelFile.isEmpty()) {
+            System.out.println("=====================================================");
+            System.out.println("=====================================================");
+            System.out.println("=====================================================");
             validateFileUpload(excelFile);
-            academicFile.setFilePath(fileHandler.handleFileUpload(excelFile));
+            existingAcademicFile.setFilePath(fileHandler.handleFileUpload(excelFile));
         }
 
-        existingAcademicFile.setFilePath(academicFile.getFilePath());
+        // Update the other properties, regardless of whether a new file is uploaded
         existingAcademicFile.setClassLevel(academicFile.getClassLevel());
         existingAcademicFile.setSemester(academicFile.getSemester());
         existingAcademicFile.setAcademicYear(academicFile.getAcademicYear());
@@ -90,8 +99,10 @@ public class AcademicFileImplementation implements FileService {
         existingAcademicFile.setCategory(academicFile.getCategory());
 
         checkForDuplicatePv(existingAcademicFile);
+
         return academicFileRepository.save(existingAcademicFile);
     }
+
 
     // Helper methods
     private void validateFileUpload(MultipartFile file) {

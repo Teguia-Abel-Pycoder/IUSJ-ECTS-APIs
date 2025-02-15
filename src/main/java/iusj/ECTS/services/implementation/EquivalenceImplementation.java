@@ -1,5 +1,6 @@
 package iusj.ECTS.services.implementation;
 
+import iusj.ECTS.enumerations.ClassLevel;
 import iusj.ECTS.models.AcademicLevel;
 import iusj.ECTS.models.Equivalence;
 import iusj.ECTS.repositories.EquivalenceRepository;
@@ -11,10 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class EquivalenceImplementation implements EquivalenceService {
@@ -24,10 +22,10 @@ public class EquivalenceImplementation implements EquivalenceService {
 
     @Override
     public Equivalence createEquivalence(Equivalence equivalence) {
-        Optional<Equivalence> optionalEquivalence = equivalenceRepository.findEquivalenceBySchoolName(equivalence.getSchoolName());
+        Optional<Equivalence> optionalEquivalence = equivalenceRepository.findEquivalenceBySchoolNameAndAcademicLevel(equivalence.getSchoolName(), equivalence.getAcademicLevel());
 
         if (optionalEquivalence.isPresent()) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Equivalence for " + equivalence.getSchoolName() + " already exists!");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Equivalence for " + equivalence.getSchoolName() + " " + equivalence.getAcademicLevel() + " already exists!");
         }
         return equivalenceRepository.save(equivalence);
     }
@@ -59,21 +57,93 @@ public class EquivalenceImplementation implements EquivalenceService {
             return ResponseEntity.badRequest().body("Invalid course type. Use 'isi' or 'srt'");
         }
 
-        newCourses.forEach((key, value) ->
-                coursesMap.merge(key, value, (existing, newVals) -> {
-                    existing.addAll(newVals);
-                    return existing;
-                })
-        );
+        List<String> duplicateCourses = new ArrayList<>();
+
+        for (Map.Entry<String, List<String>> entry : newCourses.entrySet()) {
+            String key = entry.getKey();
+            List<String> newVals = new ArrayList<>(entry.getValue()); // Copy to avoid modifying the original list
+
+            if (coursesMap.containsKey(key)) {
+                List<String> existing = coursesMap.get(key);
+
+                // Identify duplicates
+                List<String> duplicates = newVals.stream()
+                        .filter(existing::contains)
+                        .toList(); // Find values that already exist
+
+                // Remove duplicates from newVals before adding
+                newVals.removeAll(duplicates);
+
+                // Add only non-duplicates
+                existing.addAll(newVals);
+
+                // Store duplicate values to return an error
+                duplicateCourses.addAll(duplicates);
+            } else {
+                // If the key doesn't exist, just add it
+                coursesMap.put(key, newVals);
+            }
+        }
 
         try {
             equivalence.serializeMaps(); // Update JSON fields
             equivalenceRepository.save(equivalence);
+
+            // If there were duplicate values, return an error message while still adding the valid ones
+            if (!duplicateCourses.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.CONFLICT)
+                        .body("Some courses were added successfully, but the following already exist: " + duplicateCourses);
+            }
+
             return ResponseEntity.ok("Courses added successfully");
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error processing request");
         }
     }
+
+    @Override
+    public ResponseEntity<String> addEquivalence(String schoolName, ClassLevel academicLevel, String type, Map<String, List<String>> newCourses) {
+        // Validate course type early
+        if (!"isi".equalsIgnoreCase(type) && !"srt".equalsIgnoreCase(type)) {
+            return ResponseEntity.badRequest().body("Invalid course type. Use 'isi' or 'srt'");
+        }
+
+        Optional<Equivalence> optionalEquivalence = equivalenceRepository.findEquivalenceBySchoolNameAndAcademicLevel(schoolName, academicLevel);
+
+        if (optionalEquivalence.isPresent()) {
+            // If equivalence exists, add courses while checking for duplicates
+            Equivalence equivalence = optionalEquivalence.get();
+            return addCourse(equivalence.getEquivalenceId(), type, newCourses);
+        }
+
+        // Filter duplicates within newCourses before adding
+        Map<String, List<String>> filteredCourses = new HashMap<>();
+        for (Map.Entry<String, List<String>> entry : newCourses.entrySet()) {
+            List<String> uniqueValues = new ArrayList<>(new HashSet<>(entry.getValue())); // Remove duplicates
+            filteredCourses.put(entry.getKey(), uniqueValues);
+        }
+
+        // Create new equivalence
+        Equivalence newEquivalence = new Equivalence();
+        newEquivalence.setAcademicLevel(academicLevel);
+        newEquivalence.setSchoolName(schoolName);
+
+        // Assign filtered courses
+        if ("isi".equalsIgnoreCase(type)) {
+            newEquivalence.setIsiCourses(filteredCourses);
+        } else {
+            newEquivalence.setSrtCourses(filteredCourses);
+        }
+
+        try {
+            newEquivalence.serializeMaps(); // Update JSON fields
+            equivalenceRepository.save(newEquivalence);
+            return ResponseEntity.ok("Equivalence created successfully. Duplicate courses were removed.");
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error processing request");
+        }
+    }
+
     @Override
     public ResponseEntity<String> removeCourse(Long id, String type, Map<String, List<String>> coursesToRemove) {
         Optional<Equivalence> optionalEquivalence = equivalenceRepository.findById(id);
@@ -107,12 +177,12 @@ public class EquivalenceImplementation implements EquivalenceService {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error processing request");
         }
     }
-    public ResponseEntity<String> updateSchoolName(Long id, String newSchoolName) {
+    public ResponseEntity<String> updateSchoolName(Long id, String newSchoolName, ClassLevel academicLevel) {
         Optional<Equivalence> optionalEquivalence = equivalenceRepository.findById(id);
         if (optionalEquivalence.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Equivalence not found");
         }
-        Optional<Equivalence> optionalEquivalence2 = equivalenceRepository.findEquivalenceBySchoolName(newSchoolName);
+        Optional<Equivalence> optionalEquivalence2 = equivalenceRepository.findEquivalenceBySchoolNameAndAcademicLevel(newSchoolName, academicLevel);
 
         if (optionalEquivalence2.isPresent()) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Equivalence for " + newSchoolName + " already exists!");
@@ -125,8 +195,8 @@ public class EquivalenceImplementation implements EquivalenceService {
     }
 
     @Override
-    public Map<String, String> convertEquivalences(Map<String, String> studentGrades, String schoolName, String classType) {
-        Optional<Equivalence> optionalEquivalence = equivalenceRepository.findEquivalenceBySchoolName(schoolName);
+    public Map<String, String> convertEquivalences(Map<String, String> studentGrades, String schoolName, ClassLevel classLevel, String classType) {
+        Optional<Equivalence> optionalEquivalence = equivalenceRepository.findEquivalenceBySchoolNameAndAcademicLevel(schoolName, classLevel);
 
         if (optionalEquivalence.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Equivalence not found");

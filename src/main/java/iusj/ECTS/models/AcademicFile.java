@@ -6,6 +6,8 @@ import iusj.ECTS.enumerations.Semester;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.Date;
+
 @Entity
 @Data
 @NoArgsConstructor
@@ -32,10 +34,25 @@ public class AcademicFile {
     @Column(nullable = false)
     private String uploadedBy;
 
+    public Date getUploadedTime() {
+        return uploadedTime;
+    }
+    @PrePersist
+    protected void onCreate() {
+        this.uploadedTime = new Date();
+    }
+
+    public void setUploadedTime(Date uploadedTime) {
+        this.uploadedTime = uploadedTime;
+    }
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private FileCategory category;
 
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(nullable = false, updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    private Date uploadedTime;
 
     public Long getFileId() {
         return fileId;

@@ -93,9 +93,9 @@ public class AcademicFileController {
 
         String schoolName = "UTT";
         String classType = "srt";
-        double studentMgp = 3.55;
-        Map<String, String> translatedCourses = equivalenceService.convertEquivalences(studentGrades, schoolName, classType);
-        excelHandler.mainFunction( ClassLevel.SRT4, Semester.SEMESTER1, true,  translatedCourses, studentMgp);
+//        double studentMgp = 3.55;
+//        Map<String, String> translatedCourses = equivalenceService.convertEquivalences(studentGrades, schoolName, classType);
+//        excelHandler.mainFunction( ClassLevel.SRT4, Semester.SEMESTER1, true,  translatedCourses, studentMgp);
         if (category != null && !category.isEmpty()) {
             try {
                 fileCategory = FileCategory.valueOf(category); // Convert to enum
@@ -121,12 +121,14 @@ public class AcademicFileController {
 
     @PutMapping(value = "/update/{pvId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public AcademicFile updatePv(
-            @RequestPart("file") MultipartFile file,
-            @RequestPart("fileDetails") AcademicFile academicFileJson) {
+            @RequestPart(value = "file", required = false) MultipartFile file,
+            @RequestPart("fileDetails") AcademicFile academicFileJson,
+            @PathVariable Long pvId) {
         try {
-            return fileService.updatePv(file, academicFileJson);
+            return fileService.updatePv(file, academicFileJson, pvId);
         } catch (Exception e) {
             throw new RuntimeException("ERROR: " + e.getMessage(), e);
         }
     }
+
 }

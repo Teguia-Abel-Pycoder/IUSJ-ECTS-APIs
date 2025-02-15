@@ -12,5 +12,5 @@ public interface FileService {
     AcademicFile UploadPv(MultipartFile excelFile, AcademicFile academicFile);
     List<AcademicFile> AllPvs(FileCategory category, ClassLevel classLevel, Semester semester, String academicYear);
     void deletePv(Long id);
-    AcademicFile updatePv(MultipartFile excelFile, AcademicFile academicFile);
+    AcademicFile updatePv(MultipartFile excelFile, AcademicFile academicFile, Long pvId);
 }
