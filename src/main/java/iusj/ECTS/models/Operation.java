@@ -6,17 +6,16 @@ import iusj.ECTS.enumerations.OperationStatus;
 import iusj.ECTS.enumerations.Semester;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
 import java.util.Map;
 
 @Entity
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Operation {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long operationId;
@@ -24,8 +23,11 @@ public class Operation {
     private String studentName;
     private String studentID;
     private String schoolName;
+
+    @Enumerated(EnumType.STRING)
     private OperationStatus status;
 
+    private Boolean computed;
 
     @Enumerated(EnumType.STRING)
     private ClassLevel classLevel;
@@ -49,8 +51,8 @@ public class Operation {
     private Date dueDate;
 
     private double studentMgp;
-    // Getters and Setters
 
+    // Getters and Setters
     public Long getOperationId() {
         return operationId;
     }
@@ -66,6 +68,7 @@ public class Operation {
     public void setStudentName(String studentName) {
         this.studentName = studentName;
     }
+
     public String getStudentID() {
         return studentID;
     }
@@ -73,12 +76,29 @@ public class Operation {
     public void setStudentID(String studentID) {
         this.studentID = studentID;
     }
+
     public String getSchoolName() {
         return schoolName;
     }
 
     public void setSchoolName(String schoolName) {
         this.schoolName = schoolName;
+    }
+
+    public OperationStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(OperationStatus status) {
+        this.status = status;
+    }
+
+    public Boolean getComputed() {
+        return computed;
+    }
+
+    public void setComputed(Boolean computed) {
+        this.computed = computed;
     }
 
     public ClassLevel getClassLevel() {
@@ -111,6 +131,14 @@ public class Operation {
 
     public void setResult(Map<String, Double> result) {
         this.result = result;
+    }
+
+    public Date getDueDate() {
+        return dueDate;
+    }
+
+    public void setDueDate(Date dueDate) {
+        this.dueDate = dueDate;
     }
 
     public double getStudentMgp() {
