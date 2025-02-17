@@ -8,6 +8,7 @@ import iusj.ECTS.services.OperationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -32,5 +33,15 @@ public class OperationImplementation implements OperationService {
         Map<String, Double> result = excelHandler.mainFunction(operation.getClassLevel(), operation.getSemester(), true, translatedCourses, operation.getStudentMgp());
         operation.setResult(result);
         return operationRepository.save(operation);
+    }
+
+    @Override
+    public Operation saveOperation(Operation operation) {
+        return operationRepository.save(operation);
+    }
+
+    @Override
+    public List<Operation> getAllOperation() {
+        return operationRepository.findAll();
     }
 }
