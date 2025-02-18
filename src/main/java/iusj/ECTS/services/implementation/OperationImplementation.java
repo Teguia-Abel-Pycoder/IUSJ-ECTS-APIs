@@ -37,11 +37,13 @@ public class OperationImplementation implements OperationService {
 
     @Override
     public Operation saveOperation(Operation operation) {
+        operation.setStudentMgp(excelHandler.readAndManipulateExcel1(excelHandler.pvForMgp(operation.getClassLevel(), operation.getSemester()), operation.getClassLevel(),true, operation.getStudentName()));
         return operationRepository.save(operation);
     }
 
     @Override
     public List<Operation> getAllOperation() {
+
         return operationRepository.findAll();
     }
 }
