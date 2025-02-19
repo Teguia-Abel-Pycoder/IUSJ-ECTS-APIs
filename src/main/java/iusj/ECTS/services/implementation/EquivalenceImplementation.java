@@ -107,11 +107,10 @@ public class EquivalenceImplementation implements EquivalenceService {
         if (!"isi".equalsIgnoreCase(type) && !"srt".equalsIgnoreCase(type)) {
             return ResponseEntity.badRequest().body("Invalid course type. Use 'isi' or 'srt'");
         }
-
         Optional<Equivalence> optionalEquivalence = equivalenceRepository.findEquivalenceBySchoolNameAndAcademicLevel(schoolName, academicLevel);
 
         if (optionalEquivalence.isPresent()) {
-            // If equivalence exists, add courses while checking for duplicates
+//          If equivalence exists, add courses while checking for duplicates
             Equivalence equivalence = optionalEquivalence.get();
             return addCourse(equivalence.getEquivalenceId(), type, newCourses);
         }
@@ -199,6 +198,18 @@ public class EquivalenceImplementation implements EquivalenceService {
         Optional<Equivalence> optionalEquivalence = equivalenceRepository.findEquivalenceBySchoolNameAndAcademicLevel(schoolName, classLevel);
 
         if (optionalEquivalence.isEmpty()) {
+            System.out.println("==============================================================================================");
+            System.out.println("==============================================================================================");
+            System.out.println("==============================================================================================");
+            System.out.println("==============================================================================================");
+            System.out.println("==============================================================================================");
+            System.out.println("==============================================================================================");
+            System.out.println("==============================================================================================");
+            System.out.println("==============================================================================================");
+            System.out.println("==============================================================================================");
+            System.out.println("==============================================================================================");
+            System.out.println("==============================================================================================");
+            System.out.println("==============================================================================================");
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Equivalence not found");
         }
 
@@ -212,15 +223,31 @@ public class EquivalenceImplementation implements EquivalenceService {
         } else {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid course type. Use 'isi' or 'srt'");
         }
-
         if (coursesMap == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Equivalence data is missing for the given class type");
         }
-
         Map<String, String> result = new HashMap<>();
+        Map<String, List<String>> newMap = new HashMap<>();
 
+        // Iterate over the original map
+        for (Map.Entry<String, List<String>> entry : coursesMap.entrySet()) {
+            // Extract string after the first hyphen
+            String newKey = "";
+            String[] parts = entry.getKey().split("-", 2);
+            if (parts.length > 1) {
+                newKey = parts[1].trim(); // Extract after the first hyphen and trim any spaces
+            }
+
+            // Put the new key with the same value in the new map
+            newMap.put(newKey, entry.getValue());
+        }
+        System.out.println("Translated Courses:===================================================================================================================");
+        for (Map.Entry<String, List<String>> entry : newMap.entrySet()) {
+            System.out.println(entry.getKey() + " -> " + entry.getValue());
+        }
         studentGrades.forEach((key, value) -> {
-            List<String> equivalentCourses = coursesMap.get(key);
+
+            List<String> equivalentCourses = newMap.get(key);
             if (equivalentCourses != null) {
                 equivalentCourses.forEach(course -> result.put(course, value));
             }

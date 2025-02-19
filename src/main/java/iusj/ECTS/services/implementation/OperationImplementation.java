@@ -1,10 +1,12 @@
 package iusj.ECTS.services.implementation;
 
+import iusj.ECTS.enumerations.OperationStatus;
 import iusj.ECTS.models.Operation;
 import iusj.ECTS.repositories.OperationRepository;
 import iusj.ECTS.services.EquivalenceService;
 import iusj.ECTS.services.ExcelHandler;
 import iusj.ECTS.services.OperationService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,9 +34,17 @@ public class OperationImplementation implements OperationService {
         }
 
         Map<String, String> translatedCourses = equivalenceService.convertEquivalences(operation.getGrades(), operation.getSchoolName(), operation.getClassLevel() , classType);
+        
         operation.setStudentMgp(excelHandler.readAndManipulateExcel1(excelHandler.pvForMgp(operation.getClassLevel(), operation.getSemester()), operation.getClassLevel(),true, operation.getStudentName()));
         Map<String, Double> result = excelHandler.mainFunction(operation.getClassLevel(), operation.getSemester(), true, translatedCourses, operation.getStudentMgp());
         operation.setResult(result);
+        if(operation.getResult() != null){
+            operation.setStatus(OperationStatus.Done);
+            operation.setComputed(true);
+        }else {
+            operation.setStatus(OperationStatus.Pending);
+            operation.setComputed(false);
+        }
         return operationRepository.save(operation);
     }
 
@@ -46,30 +56,34 @@ public class OperationImplementation implements OperationService {
 
     @Override
     public List<Operation> getAllOperation() {
-
         return operationRepository.findAll();
     }
 
     @Override
-    public ResponseEntity<String> computeOperation(Long id, Map<String, String> newCourses) {
+    public Operation computeOperation(Long id, Operation operationResult) {
         Optional<Operation> optionalOperation = operationRepository.findById(id);
         if (optionalOperation.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Operation not found");
+            return operationRepository.findById(id).orElseThrow(() ->
+                    new EntityNotFoundException("Operation not found with id: " + id));
         }
-
         Operation operation = optionalOperation.get();
-        
         String classType = "";
-
         if (operation.getClassLevel().toString().startsWith("SRT")) {
             classType = "srt";
         } else if (operation.getClassLevel().toString().startsWith("ISI")) {
             classType = "isi";
         }
-        Map<String, String> translatedCourses = equivalenceService.convertEquivalences(operation.getGrades(), operation.getSchoolName(), operation.getClassLevel() , classType);
+        Map<String, String> translatedCourses = equivalenceService.convertEquivalences(operationResult.getGrades(), operation.getSchoolName(), operation.getClassLevel() , classType);
         Map<String, Double> result = excelHandler.mainFunction(operation.getClassLevel(), operation.getSemester(), true, translatedCourses, operation.getStudentMgp());
-        operation.setResult(result);
-        return null;
+        if(operation.getResult() != null){
+            operation.setStatus(OperationStatus.Done);
+            operation.setComputed(true);
+        }else {
+            operation.setStatus(OperationStatus.Pending);
+            operation.setComputed(false);
+        }
+        return operationRepository.save(operation);
+
     }
 
 

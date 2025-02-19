@@ -75,14 +75,14 @@ public class ExcelHandler {
                     }
                 }
                 ArrayList<Double> marksList = new ArrayList<>(nameMarks.values());
+                // Printing using a for-each loop
+                System.out.println("Marks per Course:");
+                for (Map.Entry<String, ArrayList<Double>> entry : marksPerCourse.entrySet()) {
+                    System.out.println(entry.getKey() + ": " + entry.getValue());
+                }
                 Map<String, Double> result = compute(marksPerCourse, translatedCourses,studentMgp,marksList);
 
-                System.out.println("============================================");
-                System.out.println("============================================");
-                System.out.println("============================================");
-                System.out.println("============================================");
-                System.out.println("============================================");
-                System.out.println("============================================");
+
                 System.out.println("Course and Marks:");
                 for (Map.Entry<String, Double> entry : result.entrySet()) {
                     System.out.println("Course: " + entry.getKey() + ", Mark: " + entry.getValue());
@@ -558,6 +558,15 @@ public class ExcelHandler {
     public Map<String, Double> compute(Map<String, ArrayList<Double>> marksPerCourses, Map<String, String> translatedCourses, double stdtMgp, ArrayList<Double> mgps){
         Map<String, Double> result = new HashMap<>();
         marksPerCourses.forEach((key, value) ->{
+//            System.out.println(percentileService.gradePercentileComparism(key, translatedCourses.get(key), percentileService.myPercentile(value), stdtMgp, mgps));
+//            System.out.println("============================================");
+//
+//            System.out.println("\nkey ==== " + key);
+//            System.out.println("\ntranslatedCourses.get(key)" + translatedCourses.get(key));
+//            System.out.println("\npercentileService.myPercentile(value)" + percentileService.myPercentile(value));
+//            System.out.println("\nstdtMgp"+ stdtMgp);
+//            System.out.println("\nmgps" + mgps);
+//            System.out.println("============================================");
             result.put(key, percentileService.gradePercentileComparism(key, translatedCourses.get(key), percentileService.myPercentile(value), stdtMgp, mgps));
         });
         return result;
