@@ -33,7 +33,7 @@ public class OperationController {
     public ResponseEntity<List<Operation>> getAllOperation(){
         return ResponseEntity.ok(operationService.getAllOperation());
     }
-    @PostMapping("/{id}/compute")
+    @PutMapping("/{id}/compute")
     public ResponseEntity<Operation> computeOperation(@PathVariable Long id, @RequestBody Operation operationResult) {
         try {
             Operation computedOperation = operationService.computeOperation(id, operationResult);

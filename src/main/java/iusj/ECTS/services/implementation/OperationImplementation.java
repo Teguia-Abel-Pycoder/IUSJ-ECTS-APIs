@@ -50,6 +50,12 @@ public class OperationImplementation implements OperationService {
 
     @Override
     public Operation saveOperation(Operation operation) {
+        for (Map.Entry<String, String> entry : operation.getGrades().entrySet()) {
+            entry.setValue("");
+        }
+        operation.setStatus(OperationStatus.Pending);
+        operation.setComputed(false);
+
         operation.setStudentMgp(excelHandler.readAndManipulateExcel1(excelHandler.pvForMgp(operation.getClassLevel(), operation.getSemester()), operation.getClassLevel(),true, operation.getStudentName()));
         return operationRepository.save(operation);
     }
@@ -67,6 +73,7 @@ public class OperationImplementation implements OperationService {
                     new EntityNotFoundException("Operation not found with id: " + id));
         }
         Operation operation = optionalOperation.get();
+        operation.setGrades(operationResult.getGrades());
         String classType = "";
         if (operation.getClassLevel().toString().startsWith("SRT")) {
             classType = "srt";
@@ -75,6 +82,7 @@ public class OperationImplementation implements OperationService {
         }
         Map<String, String> translatedCourses = equivalenceService.convertEquivalences(operationResult.getGrades(), operation.getSchoolName(), operation.getClassLevel() , classType);
         Map<String, Double> result = excelHandler.mainFunction(operation.getClassLevel(), operation.getSemester(), true, translatedCourses, operation.getStudentMgp());
+        operation.setResult(result);
         if(operation.getResult() != null){
             operation.setStatus(OperationStatus.Done);
             operation.setComputed(true);
