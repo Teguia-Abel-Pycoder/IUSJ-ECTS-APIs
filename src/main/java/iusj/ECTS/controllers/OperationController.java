@@ -27,7 +27,7 @@ public class OperationController {
     }
     @PostMapping("/save-student")
     public Operation saveOperation(@RequestBody Operation operation) {
-        return operationService.saveOperation(operation);
+        return operationService.createOperation(operation);
     }
     @GetMapping("/all-operation")
     public ResponseEntity<List<Operation>> getAllOperation(){

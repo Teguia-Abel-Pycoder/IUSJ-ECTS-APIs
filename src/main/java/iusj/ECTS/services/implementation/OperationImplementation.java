@@ -8,8 +8,6 @@ import iusj.ECTS.services.ExcelHandler;
 import iusj.ECTS.services.OperationService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -32,12 +30,20 @@ public class OperationImplementation implements OperationService {
         } else if (operation.getClassLevel().toString().startsWith("ISI")) {
             classType = "isi";
         }
+        boolean allKeysHaveValues = operation.getGrades().values().stream()
+                .allMatch(value -> value != null && !value.isEmpty());
 
-        Map<String, String> translatedCourses = equivalenceService.convertEquivalences(operation.getGrades(), operation.getSchoolName(), operation.getClassLevel() , classType);
+        if (allKeysHaveValues) {
+            Map<String, String> translatedCourses = equivalenceService.convertEquivalences(operation.getGrades(), operation.getSchoolName(), operation.getClassLevel() , classType);
 
-        operation.setStudentMgp(excelHandler.readAndManipulateExcel1(excelHandler.pvForMgp(operation.getClassLevel(), operation.getSemester()), operation.getClassLevel(),true, operation.getStudentName()));
-        Map<String, Double> result = excelHandler.mainFunction(operation.getClassLevel(), operation.getSemester(), true, translatedCourses, operation.getStudentMgp());
-        operation.setResult(result);
+            operation.setStudentMgp(excelHandler.readAndManipulateExcel1(excelHandler.pvForMgp(operation.getClassLevel(), operation.getSemester()), operation.getClassLevel(),true, operation.getStudentName()));
+            Map<String, Double> result = excelHandler.mainFunction(operation.getClassLevel(), operation.getSemester(), true, translatedCourses, operation.getStudentMgp());
+            operation.setResult(result);
+        } else {
+            System.out.println("Some keys have missing or empty values.");
+            saveOperation(operation);
+        }
+
         if(operation.getResult() != null){
             operation.setStatus(OperationStatus.Done);
             operation.setComputed(true);
