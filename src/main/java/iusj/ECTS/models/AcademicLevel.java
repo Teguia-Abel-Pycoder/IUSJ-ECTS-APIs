@@ -24,7 +24,7 @@ public class AcademicLevel {
     @Column(name = "course_description")
     private Map<String, String> courses;
 
-    // Getter and Setter for academicLevelId
+    // Getter and Setter 
     public Long getAcademicLevelId() {
         return academicLevelId;
     }
