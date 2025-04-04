@@ -22,7 +22,7 @@ public class AcademicLevelController {
         AcademicLevel academicLevel = academicLevelService.createAcademicLevel(request.getLevelName(), request.getCourses());
         return new ResponseEntity<>(academicLevel, HttpStatus.CREATED);
     }
-    // Endpoint to add multiple courses to an existing academic level
+    // Endpoint to add multiple courses to an existing academic levl
     @PutMapping("/{academicLevelId}/courses")
     public ResponseEntity<AcademicLevel> addCoursesToAcademicLevel(
             @PathVariable Long academicLevelId,
