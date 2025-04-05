@@ -52,7 +52,7 @@ public class Operation {
 
     private double studentMgp;
 
-    // Getters and Setters
+    // Getters and 
     public Long getOperationId() {
         return operationId;
     }
