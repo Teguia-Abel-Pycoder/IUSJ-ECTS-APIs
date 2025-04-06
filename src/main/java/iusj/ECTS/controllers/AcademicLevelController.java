@@ -43,7 +43,7 @@ public class AcademicLevelController {
     }
 
 
-    // Endpoint to modify a course in an existing academic level
+    // Endpoint  a course in an existing academic level
     @PutMapping("/{academicLevelId}/courses/{courseName}")
     public ResponseEntity<AcademicLevel> modifyCourseInAcademicLevel(
             @PathVariable Long academicLevelId,
